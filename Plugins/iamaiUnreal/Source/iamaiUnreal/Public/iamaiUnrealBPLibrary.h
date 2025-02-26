@@ -25,7 +25,7 @@ public:
      * @param ModelName - Name of the model directory to load
      * @return A new AI wrapper object
      */
-    UFUNCTION(BlueprintCallable, Category = "AI")
+    UFUNCTION(BlueprintCallable, Category = "iamai AI")
     static UAIWrapper* InitializeAI(const FString& ModelName);
 };
 

@@ -38,27 +38,27 @@ public:
      * @param MaxLength - Maximum length of the generated output
      * @return The generated text
      */
-    UFUNCTION(BlueprintCallable, Category = "AI")
+    UFUNCTION(BlueprintCallable, Category = "iamai AI")
     FString Generate(const FString& Prompt, int32 MaxLength = 4096);
 
     /**
      * Set the maximum number of tokens to generate
      * @param MaxTokens - Maximum number of tokens
      */
-    UFUNCTION(BlueprintCallable, Category = "AI")
+    UFUNCTION(BlueprintCallable, Category = "iamai AI")
     void SetMaxTokens(int32 MaxTokens);
 
     /**
      * Set the number of threads to use
      * @param NumThreads - Number of threads
      */
-    UFUNCTION(BlueprintCallable, Category = "AI")
+    UFUNCTION(BlueprintCallable, Category = "iamai AI")
     void SetThreads(int32 NumThreads);
 
     /**
      * Set the batch size for generation
      * @param BatchSize - Batch size
      */
-    UFUNCTION(BlueprintCallable, Category = "AI")
+    UFUNCTION(BlueprintCallable, Category = "iamai AI")
     void SetBatchSize(int32 BatchSize);
 };
