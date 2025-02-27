@@ -53,21 +53,33 @@ public:
 
 	iamai_AI(const std::string& modelName) : ctx(nullptr) {
 		// Get the current directory and navigate to the DLL location
-		auto currentPath = fs::current_path();
+		/*auto currentPath = fs::current_path();
 		auto projectRoot = currentPath.parent_path().parent_path().parent_path().parent_path();
 		auto dllDirectory = projectRoot / "Plugins" / "iamaiUnreal" / "Binaries" / "Thirdparty";
 		auto dllPath = dllDirectory / DLL_PATH;
-		auto modelPath = projectRoot / "Plugins" / "iamaiUnreal" / "Models" / modelName;
+		auto modelPath = projectRoot / "Plugins" / "iamaiUnreal" / "Models" / modelName;*/
+
+		// Get the Unreal Engine project directory
+		FString ProjectDirFString = FPaths::ProjectDir();
+		FString PluginDirFString = FPaths::Combine(ProjectDirFString, TEXT("Plugins"), TEXT("iamaiUnreal"));
+		FString DllDirectoryFString = FPaths::Combine(PluginDirFString, TEXT("Binaries"), TEXT("ThirdParty"));
+		FString DllPathFString = FPaths::Combine(DllDirectoryFString, TEXT("iamai-core.dll"));
+		FString ModelPathFString = FPaths::Combine(PluginDirFString, TEXT("Models"), *FString(modelName.c_str()));
+
+		// Convert to standard strings
+		std::string dllDirectory = TCHAR_TO_UTF8(*DllDirectoryFString);
+		std::string dllPath = TCHAR_TO_UTF8(*DllPathFString);
+		std::string modelPath = TCHAR_TO_UTF8(*ModelPathFString);
 
 		if (!fs::exists(dllDirectory)) {
-			throw std::runtime_error("DLL directory not found: " + dllDirectory.string());
+			throw std::runtime_error("DLL directory not found: " + dllDirectory);
 		}
 
-		std::cout << "Loading DLL from: " << dllPath.string() << std::endl;
-		SetDllDirectoryA(dllDirectory.string().c_str());
+		std::cout << "Loading DLL from: " << dllPath << std::endl;
+		SetDllDirectoryA(dllDirectory.c_str());
 
 		// Load the DLL
-		dllHandle = LoadLibraryA(dllPath.string().c_str());
+		dllHandle = LoadLibraryA(dllPath.c_str());
 		if (!dllHandle) {
 			int errorCode = GetLastError();
 			throw std::runtime_error("Failed to load DLL. Error code: " + std::to_string(errorCode));
@@ -82,7 +94,7 @@ public:
 		_free = GetFunction<FreeFunction>("Free");
 
 		// Initialize the model
-		ctx = _init(modelPath.string().c_str());
+		ctx = _init(modelPath.c_str());
 		if (!ctx) {
 			throw std::runtime_error("Failed to initialize model");
 		}
