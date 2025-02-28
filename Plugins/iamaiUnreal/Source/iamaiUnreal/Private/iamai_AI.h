@@ -62,7 +62,7 @@ public:
 		// Get the Unreal Engine project directory
 		FString ProjectDirFString = FPaths::ProjectDir();
 		FString PluginDirFString = FPaths::Combine(ProjectDirFString, TEXT("Plugins"), TEXT("iamaiUnreal"));
-		FString DllDirectoryFString = FPaths::Combine(PluginDirFString, TEXT("Binaries"), TEXT("ThirdParty"));
+		FString DllDirectoryFString = FPaths::Combine(PluginDirFString, TEXT("ThirdParty"));
 		FString DllPathFString = FPaths::Combine(DllDirectoryFString, TEXT("iamai-core.dll"));
 		FString ModelPathFString = FPaths::Combine(PluginDirFString, TEXT("Models"), *FString(modelName.c_str()));
 
