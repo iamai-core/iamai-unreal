@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include <memory>
-#include "AIWrapper.generated.h"
 
-// Forward declaration of the AI class
-class iamai_AI;
+#include <memory>
+
+#include "iamai_AI.h"
+
+#include "AIWrapper.generated.h"
 
 /**
  * Blueprint-friendly wrapper for the AI class

@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <memory>
 #include <windows.h>
+#include "Misc/Paths.h"
 
 namespace fs = std::filesystem;
 

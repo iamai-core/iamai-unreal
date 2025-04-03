@@ -3,6 +3,8 @@
 
 #include "GenerateText.h"
 
+#include "Async/Async.h"
+
 UGenerateText* UGenerateText::Generate(UAIWrapper* aiWrapper, const FString& Prompt, int32 MaxLength) {
 
 	UGenerateText* Node = NewObject<UGenerateText>();
@@ -24,7 +26,7 @@ void UGenerateText::Activate() {
 
     }
 
-    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [this]() {
+    Async(EAsyncExecution::ThreadPool, [this]() {
 
         FString Result;
         bool bSuccess = false;
@@ -34,13 +36,13 @@ void UGenerateText::Activate() {
             Result = AIInstance->Generate(*Prompt, MaxLength);
             bSuccess = !Result.IsEmpty();
 
-        } catch (const std::exception& e) {
+        } catch (const std::exception&) {
 
-            UE_LOG(LogTemp, Error, TEXT("Generation error: %s"), UTF8_TO_TCHAR(e.what()));
+            UE_LOG(LogTemp, Error, TEXT("Generation error has occurred"));
 
         }
 
-        AsyncTask(ENamedThreads::GameThread, [this, bSuccess, Result]() {
+        Async(EAsyncExecution::TaskGraphMainThread, [this, bSuccess, Result]() {
 
             OnCompleted.Broadcast(bSuccess, Result);
 

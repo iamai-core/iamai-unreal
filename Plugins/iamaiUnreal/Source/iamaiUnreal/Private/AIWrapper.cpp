@@ -2,7 +2,6 @@
 
 
 #include "AIWrapper.h"
-#include "iamai_AI.h"
 
 UAIWrapper::UAIWrapper()
     : AIInstance(nullptr)
