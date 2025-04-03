@@ -20,13 +20,6 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Test function", Keywords = "iamaiUnreal testing"), Category = "iamaiUnrealTesting")
 	static bool TestFunction(float input1, float input2, FString& returnValue);
 
-    /**
-     * Initialize the AI model with the given model name
-     * @param ModelName - Name of the model directory to load
-     * @return A new AI wrapper object
-     */
-    UFUNCTION(BlueprintCallable, Category = "iamai AI")
-    static UAIWrapper* InitializeAI(const FString& ModelName);
 };
 
 //UAIWrapper* UAIBlueprintLibrary::InitializeAI(const FString& ModelName)

@@ -32,14 +32,14 @@ public:
      */
     bool Initialize(const FString& ModelName);
 
+
     /**
      * Generate text based on a prompt
      * @param Prompt - The input prompt
      * @param MaxLength - Maximum length of the generated output
      * @return The generated text
      */
-    UFUNCTION(BlueprintCallable, Category = "iamai AI")
-    FString Generate(const FString& Prompt, int32 MaxLength = 4096);
+    FString Generate(const std::string& Prompt, int32 MaxLength = 4096);
 
     /**
      * Set the maximum number of tokens to generate

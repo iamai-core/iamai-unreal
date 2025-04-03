@@ -28,7 +28,7 @@ bool UAIWrapper::Initialize(const FString& ModelName)
     }
 }
 
-FString UAIWrapper::Generate(const FString& Prompt, int32 MaxLength)
+FString UAIWrapper::Generate(const std::string& Prompt, int32 MaxLength)
 {
     if (!AIInstance)
     {
@@ -38,7 +38,7 @@ FString UAIWrapper::Generate(const FString& Prompt, int32 MaxLength)
 
     try
     {
-        std::string result = AIInstance->Generate(TCHAR_TO_UTF8(*Prompt), MaxLength);
+        std::string result = AIInstance->Generate(Prompt, MaxLength);
         return UTF8_TO_TCHAR(result.c_str());
     }
     catch (const std::exception& e)
@@ -46,6 +46,7 @@ FString UAIWrapper::Generate(const FString& Prompt, int32 MaxLength)
         UE_LOG(LogTemp, Error, TEXT("Generation error: %s"), UTF8_TO_TCHAR(e.what()));
         return FString::Printf(TEXT("Error: %s"), UTF8_TO_TCHAR(e.what()));
     }
+
 }
 
 void UAIWrapper::SetMaxTokens(int32 MaxTokens)
