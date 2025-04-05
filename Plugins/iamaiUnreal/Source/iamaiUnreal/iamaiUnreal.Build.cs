@@ -13,7 +13,8 @@ public class iamaiUnreal : ModuleRules {
         PublicDependencyModuleNames.AddRange( new string[] {
                 "Core",
                 "CoreUObject",
-                "Engine"
+                "Engine",
+                "AudioCapture"
         } );
 
 

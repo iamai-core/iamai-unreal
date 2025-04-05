@@ -65,4 +65,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iamai AI")
 	void SetBatchSize(int32 BatchSize);
 
+
+	/** 
+	* Transcribe an audio file
+	* @param FilePath - Path to the wav audio file
+	*/
+	FString Transcribe(const std::string& FilePath);
+
+	/**
+	* Transcribe audio to text from float array
+	* @param AudioData - Pointer to the audio data
+	* @param SampleCount - Number of samples in the audio data
+	*/
+	FString Transcribe(float* AudioData, int SampleCount);
+
 };
