@@ -1,56 +1,84 @@
 #include "iamaiVoiceInput.h"
+
 #include "Engine/Engine.h"
 #include "Sound/SoundSubmix.h"
 #include "AudioCaptureComponent.h"
-#include "iamaiSubmixListener.h"  // Your listener class
+#include "AudioMixerBlueprintLibrary.h"
 
 UiamaiVoiceInput::UiamaiVoiceInput() {
-    AudioCaptureComponent = CreateDefaultSubobject<UAudioCaptureComponent>(TEXT("AudioCaptureComponent"));
-}
 
-void UiamaiVoiceInput::BeginPlay() {
-    Super::BeginPlay();
-
-    if (!AudioCaptureComponent) {
-        UE_LOG(LogTemp, Error, TEXT("AudioCaptureComponent is null in UIAmaiVoiceInput"));
+    OwnerActor = GetOwner();
+    if (!OwnerActor) {
+        UE_LOG(LogTemp, Warning, TEXT("OwnerActor is invalid!"));
         return;
     }
 
+	AudioCaptureComponent = NewObject<UAudioCaptureComponent>(OwnerActor);
 
-    Listener = NewObject<UiamaiSubmixListener>(this, UiamaiSubmixListener::StaticClass());
-    SoundSubmix = NewObject<USoundSubmix>(this, USoundSubmix::StaticClass(), TEXT("iamaiSubmix"));
+}
 
-    if (SoundSubmix && Listener) {
-        
-        SoundSubmix->AddEnvelopeFollowerDelegate(Listener, &(UiamaiSubmixListener::OnEnvelopeUpdate) );
+void UiamaiVoiceInput::BeginPlay() {
+	Super::BeginPlay();
 
-    }
+	if (!AudioCaptureComponent) {
+		UE_LOG(LogTemp, Error, TEXT("AudioCaptureComponent is null in UIAmaiVoiceInput"));
+		return;
+	}
 
-    if (!AudioCaptureComponent || !SoundSubmix) return;
+	SoundSubmix = NewObject<USoundSubmix>(GetTransientPackage(), USoundSubmix::StaticClass(), NAME_None, RF_Transient);
+	if (!SoundSubmix) {
+		UE_LOG(LogTemp, Error, TEXT("SoundSubmix is null in UIAmaiVoiceInput"));
+		return;
+	}
 
-    AudioCaptureComponent->SoundSubmix = SoundSubmix;
+	AudioCaptureComponent->SoundSubmix = SoundSubmix;
 
-    if (bRecordOnStartup) StartCapturingAudio();
+	AudioCaptureComponent->RegisterComponent();
+	AudioCaptureComponent->AttachToComponent(OwnerActor->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	AudioCaptureComponent->SetComponentTickEnabled(true);
+
+	OwnerActor->AddInstanceComponent(AudioCaptureComponent);
+	AudioCaptureComponent->Activate();
+
+	FScriptDelegate EnvelopeDelegate;
+	EnvelopeDelegate.BindUFunction(this, FName("OnEnvelopeValue"));
+	AudioCaptureComponent->OnAudioEnvelopeValue.Add(EnvelopeDelegate);
+
+	if (bRecordOnStartup) StartCapturingAudio();
 
 }
 
 void UiamaiVoiceInput::EndPlay(const EEndPlayReason::Type EndPlayReason) {
-    Super::EndPlay(EndPlayReason);
+	Super::EndPlay(EndPlayReason);
 
-    StopCapturingAudio();
+	StopCapturingAudio();
+
+}
+
+void UiamaiVoiceInput::OnEnvelopeValue(const float EnvelopeValue) {
+	
+	EnvelopeHistory.Add(EnvelopeValue);
+	UE_LOG(LogTemp, Log, TEXT("Envelope Value: %f"), EnvelopeValue);
 
 }
 
 void UiamaiVoiceInput::StartCapturingAudio() {
 
-    if (!AudioCaptureComponent) return;
-    AudioCaptureComponent->Start();
+	if (!AudioCaptureComponent) return;
+	if (bIsCapturing) return;
+	
+	bIsCapturing = true;
+	EnvelopeHistory.Empty();
+	AudioCaptureComponent->Start();
 
 }
 
 void UiamaiVoiceInput::StopCapturingAudio() {
 
-    if (!AudioCaptureComponent) return;
-    AudioCaptureComponent->Stop();
+	if (!AudioCaptureComponent) return;
+	if (!bIsCapturing) return;
+
+	bIsCapturing = false;
+	AudioCaptureComponent->Stop();
 
 }

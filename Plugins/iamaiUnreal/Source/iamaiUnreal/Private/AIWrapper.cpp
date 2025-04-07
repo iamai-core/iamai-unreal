@@ -54,12 +54,6 @@ void UAIWrapper::SetBatchSize(int32 BatchSize) {
 	}
 }
 
-FString UAIWrapper::Transcribe(const std::string& FilePath) {
-	if (!AIInstance) return "";
-	//return FString(AIInstance->Transcribe(FilePath).c_str());
-	return "";
-}
-
 FString UAIWrapper::Transcribe(float* AudioData, int SampleCount) {
 
 	if (!AIInstance) return "";

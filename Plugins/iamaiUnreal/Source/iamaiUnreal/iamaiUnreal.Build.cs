@@ -16,6 +16,7 @@ public class iamaiUnreal : ModuleRules {
                 "Engine",
                 "AudioCapture",
                 "AudioMixer",
+                "Projects",
         } );
 
 

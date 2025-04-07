@@ -86,18 +86,21 @@ std::string iamai_AI::Generate(const std::string& prompt, int maxLength) {
 
 FString iamai_AI::Transcribe(float* AudioData, int SampleCount) {
     
-    if (!WhisperContext || !whisper_full || !whisper_full_default_params || !whisper_full_get_segment_text || !whisper_full_n_segments)
-        return "";
+    if (!WhisperContext || !whisper_full || !whisper_full_default_params ||
+        !whisper_full_get_segment_text || !whisper_full_n_segments) return "";
 
-    void* Params = whisper_full_default_params();
+    whisper_full_params Params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
+    Params.print_progress = false;
+    Params.print_special = false;
+    Params.print_realtime = false;
+    Params.single_segment = true;
+
     int Result = whisper_full(WhisperContext, Params, AudioData, SampleCount);
-
-    if (Result != 0)
-        return "";
+    if (Result != 0) return "";
 
     int SegmentCount = whisper_full_n_segments(WhisperContext);
-    
-	FString OutText;
+
+    FString OutText;
     for (int i = 0; i < SegmentCount; ++i) {
         const char* Segment = whisper_full_get_segment_text(WhisperContext, i);
         OutText += ANSI_TO_TCHAR(Segment);

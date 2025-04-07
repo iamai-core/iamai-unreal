@@ -4,8 +4,6 @@
 
 #include "Modules/ModuleManager.h"
 
-class iamaiSubmixListener;
-
 class FiamaiUnrealModule : public IModuleInterface {
 
 public:

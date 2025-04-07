@@ -1,5 +1,8 @@
 #include "TranscribeAudio.h"
 
+#include "AIWrapper.h"
+#include "iamaiVoiceInput.h"
+
 #include "AudioCapture.h"
 
 UTranscribeAudio::UTranscribeAudio() {
@@ -10,18 +13,18 @@ UTranscribeAudio::UTranscribeAudio() {
 
 }
 
-UTranscribeAudio* UTranscribeAudio::Transcribe(UAIWrapper* AIWrapper, USoundWave* soundWave) {
+UTranscribeAudio* UTranscribeAudio::Transcribe(UAIWrapper* AIWrapper, UiamaiVoiceInput* iamaiVoiceInput) {
 
 	UTranscribeAudio* Node = NewObject<UTranscribeAudio>();
 	Node->m_aiWrapper = AIWrapper;
-	Node->m_soundWave = soundWave;
+	Node->m_iamaiVoiceInput = iamaiVoiceInput;
 	return Node;
 
 }
 
 void UTranscribeAudio::Activate() {
 
-	if (!m_aiWrapper || !m_soundWave) {
+	if (!m_aiWrapper || !m_iamaiVoiceInput) {
 
 		OnTextTranscribed.Broadcast(false, TEXT("Invalid inputs"));
 		return;
@@ -32,13 +35,11 @@ void UTranscribeAudio::Activate() {
 
 	Async(EAsyncExecution::ThreadPool, [this]() {
 
-		uint8* FloatAudio = m_soundWave->RawPCMData;
-		int32 Samples = m_soundWave->RawPCMDataSize / sizeof(uint8);
-
-		FString TranscribedText = m_aiWrapper->Transcribe((float*) FloatAudio, Samples);
-
+		auto data = m_iamaiVoiceInput->GetAudioData();
+		auto TranscribedText = m_aiWrapper->Transcribe(data.GetData(), data.Num());
 
 		Async(EAsyncExecution::TaskGraphMainThread, [this, TranscribedText]() {
+
 			OnTextTranscribed.Broadcast(!TranscribedText.IsEmpty(), TranscribedText);
 			});
 
