@@ -23,7 +23,7 @@ class IAMAIUNREAL_API UInitializeAI : public UBlueprintAsyncActionBase {
 
 public:
 
-	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Initialize AI", Category = "Iamai Core"))
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Initialize AI", Category = "iamai core"))
 	static UInitializeAI* Initialize(const FString& ModelName);
 
 	UPROPERTY(BlueprintAssignable)

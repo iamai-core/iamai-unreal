@@ -24,7 +24,7 @@ class IAMAIUNREAL_API UGenerateText : public UBlueprintAsyncActionBase {
 
 public:
 
-	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Generate Text", Category = "Iamai Core"))
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Generate Text", Category = "iamai core"))
 	static UGenerateText* Generate( UAIWrapper* aiWrapper, const FString& Prompt, int32 MaxLength = 4096);
 
 	UPROPERTY(BlueprintAssignable)
