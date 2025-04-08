@@ -15,8 +15,7 @@ public class iamaiUnreal : ModuleRules {
                 "CoreUObject",
                 "Engine",
                 "AudioCapture",
-                "AudioMixer",
-                "Projects",
+                "AudioMixer"
         } );
 
 
@@ -24,7 +23,7 @@ public class iamaiUnreal : ModuleRules {
                 "CoreUObject",
                 "Engine",
                 "Slate",
-                "SlateCore",
+                "SlateCore"
         } );
 
     }

@@ -3,21 +3,31 @@
 
 #include "AIWrapper.h"
 
-UAIWrapper::UAIWrapper()
-	: AIInstance(nullptr) {}
+UAIWrapper::UAIWrapper() : 
+	AIInstance(nullptr),
+	WhisperInstance(nullptr)
+{}
 
 UAIWrapper::~UAIWrapper() {
 	// The unique_ptr will handle cleanup automatically
 }
 
 bool UAIWrapper::Initialize(const FString& ModelName) {
+
 	try {
+
 		AIInstance = std::make_unique<iamai_AI>(TCHAR_TO_UTF8(*ModelName));
+		WhisperInstance = std::make_unique<FWhisperWrapper>();
+		
 		return true;
+
 	} catch (const std::exception& e) {
+
 		UE_LOG(LogTemp, Error, TEXT("AI initialization error: %s"), UTF8_TO_TCHAR(e.what()));
 		return false;
+
 	}
+
 }
 
 FString UAIWrapper::Generate(const std::string& Prompt, int32 MaxLength) {
@@ -57,6 +67,10 @@ void UAIWrapper::SetBatchSize(int32 BatchSize) {
 FString UAIWrapper::Transcribe(float* AudioData, int SampleCount) {
 
 	if (!AIInstance) return "";
-	return AIInstance->Transcribe(AudioData, SampleCount);
+
+	FString Transcript;
+	WhisperInstance->Transcribe(AudioData, SampleCount, Transcript);
+
+	return Transcript;
 
 }

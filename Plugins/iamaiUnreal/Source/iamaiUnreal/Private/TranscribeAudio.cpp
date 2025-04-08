@@ -1,15 +1,9 @@
 #include "TranscribeAudio.h"
 
-#include "AIWrapper.h"
 #include "iamaiVoiceInput.h"
-
-#include "AudioCapture.h"
+#include "AIWrapper.h"
 
 UTranscribeAudio::UTranscribeAudio() {
-
-	UAudioCapture* audioCapture = NewObject<UAudioCapture>();
-	audioCapture->StartCapturingAudio();
-
 
 }
 
@@ -30,13 +24,12 @@ void UTranscribeAudio::Activate() {
 		return;
 
 	}
-	 
-
 
 	Async(EAsyncExecution::ThreadPool, [this]() {
 
-		auto data = m_iamaiVoiceInput->GetAudioData();
-		auto TranscribedText = m_aiWrapper->Transcribe(data.GetData(), data.Num());
+		float* data = m_iamaiVoiceInput->GetAudioData();
+		int32 size = m_iamaiVoiceInput->GetNumSamples();
+		FString TranscribedText = m_aiWrapper->Transcribe(data, size);
 
 		Async(EAsyncExecution::TaskGraphMainThread, [this, TranscribedText]() {
 

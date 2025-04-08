@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "iamai_AI.h"
+#include "WhisperWrapper.h"
 
 #include "AIWrapper.generated.h"
 
@@ -22,6 +23,7 @@ class IAMAIUNREAL_API UAIWrapper : public UObject {
 private:
 
 	std::unique_ptr<iamai_AI> AIInstance;
+	std::unique_ptr<FWhisperWrapper> WhisperInstance;
 
 public:
 

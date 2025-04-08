@@ -42,33 +42,6 @@ iamai_AI::iamai_AI(const std::string& modelName) {
         throw std::runtime_error("Failed to initialize model");
     }
 
-    FString WhisperDllPathFString = FPaths::Combine(DllDirectoryFString, TEXT("whisper.dll"));
-    std::string whisperDllPath = TCHAR_TO_UTF8(*WhisperDllPathFString);
-
-    FString WhisperModelPathFString = FPaths::Combine(PluginDirFString, TEXT("Models"), *FString("ggml-base.bin"));
-    std::string whisperModelPath = TCHAR_TO_UTF8(*WhisperModelPathFString);
-
-    // Load the whisper DLL
-    whisperDllHandle = LoadLibraryA(whisperDllPath.c_str());
-    if (!whisperDllHandle) {
-        int errorCode = GetLastError();
-        throw std::runtime_error("Failed to load whisper DLL. Error code: " + std::to_string(errorCode));
-    }
-
-    // Get whisper function pointers
-    whisper_init_from_file = (whisper_init_from_file_fn)GetProcAddress(whisperDllHandle, "whisper_init_from_file");
-    whisper_free = (whisper_free_fn)GetProcAddress(whisperDllHandle, "whisper_free");
-    whisper_full = (whisper_full_fn)GetProcAddress(whisperDllHandle, "whisper_full");
-    whisper_full_default_params = (whisper_full_default_params_fn)GetProcAddress(whisperDllHandle, "whisper_full_default_params");
-    whisper_full_get_segment_text = (whisper_full_get_segment_text_fn)GetProcAddress(whisperDllHandle, "whisper_full_get_segment_text");
-    whisper_full_n_segments = (whisper_full_n_segments_fn)GetProcAddress(whisperDllHandle, "whisper_full_n_segments");
-
-    WhisperContext = whisper_init_from_file(whisperModelPath.c_str());
-	if (!WhisperContext) {
-        int errorCode = GetLastError();
-		throw std::runtime_error("Failed to initialize whisper model" + std::to_string(errorCode));
-	}
-
 }
 
 std::string iamai_AI::Generate(const std::string& prompt, int maxLength) {
@@ -81,32 +54,6 @@ std::string iamai_AI::Generate(const std::string& prompt, int maxLength) {
     }
 
     return std::string(output.get());
-
-}
-
-FString iamai_AI::Transcribe(float* AudioData, int SampleCount) {
-    
-    if (!WhisperContext || !whisper_full || !whisper_full_default_params ||
-        !whisper_full_get_segment_text || !whisper_full_n_segments) return "";
-
-    whisper_full_params Params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
-    Params.print_progress = false;
-    Params.print_special = false;
-    Params.print_realtime = false;
-    Params.single_segment = true;
-
-    int Result = whisper_full(WhisperContext, Params, AudioData, SampleCount);
-    if (Result != 0) return "";
-
-    int SegmentCount = whisper_full_n_segments(WhisperContext);
-
-    FString OutText;
-    for (int i = 0; i < SegmentCount; ++i) {
-        const char* Segment = whisper_full_get_segment_text(WhisperContext, i);
-        OutText += ANSI_TO_TCHAR(Segment);
-    }
-
-    return OutText;
 
 }
 
@@ -124,18 +71,9 @@ iamai_AI::~iamai_AI() {
             iamaiDllHandle = nullptr;
         }
 
-        if (WhisperContext && whisper_free) {
-            whisper_free(WhisperContext);
-            WhisperContext = nullptr;
-        }
-
-        if (whisperDllHandle) {
-            FreeLibrary(whisperDllHandle);
-            whisperDllHandle = nullptr;
-        }
-
         disposed = true;
 
     }
 
 }
+
