@@ -80,48 +80,6 @@ void UAIWrapper::SetBatchSize(int32 BatchSize) {
 	}
 }
 
-
-
-#include <fstream>
-#include <vector>
-#include <cstdint>
-#include <algorithm>
-
-void write_wav_from_float(const std::string& filename, float* pcm_float, size_t num_samples, int sample_rate, int num_channels = 1) {
-	
-	std::ofstream file(filename, std::ios::binary);
-
-	std::vector<int16_t> pcm_int(num_samples);
-	for (size_t i = 0; i < num_samples; ++i)
-		pcm_int[i] = std::clamp(pcm_float[i], -1.0f, 1.0f) * 32767;
-
-	int byte_rate = sample_rate * num_channels * sizeof(int16_t);
-	int block_align = num_channels * sizeof(int16_t);
-	int data_chunk_size = pcm_int.size() * sizeof(int16_t);
-	int riff_chunk_size = 36 + data_chunk_size;
-	int16_t audio_format = 1; // PCM
-	int16_t bits_per_sample = 16;
-
-	file.write("RIFF", 4);
-	file.write(reinterpret_cast<const char*>(&riff_chunk_size), 4);
-	file.write("WAVE", 4);
-
-	file.write("fmt ", 4);
-	int fmt_chunk_size = 16;
-	file.write(reinterpret_cast<const char*>(&fmt_chunk_size), 4);
-	file.write(reinterpret_cast<const char*>(&audio_format), 2);
-	file.write(reinterpret_cast<const char*>(&num_channels), 2);
-	file.write(reinterpret_cast<const char*>(&sample_rate), 4);
-	file.write(reinterpret_cast<const char*>(&byte_rate), 4);
-	file.write(reinterpret_cast<const char*>(&block_align), 2);
-	file.write(reinterpret_cast<const char*>(&bits_per_sample), 2);
-
-	file.write("data", 4);
-	file.write(reinterpret_cast<const char*>(&data_chunk_size), 4);
-	file.write(reinterpret_cast<const char*>(pcm_int.data()), data_chunk_size);
-
-}
-
 std::vector<float> clean_pcm(const std::vector<float>& input) {
 
 	std::vector<float> output;
@@ -145,8 +103,6 @@ FString UAIWrapper::Transcribe(float* AudioData, int SampleCount) {
 	if (!iamaiInstance) return "";
 
 	std::vector<float> downsized = clean_pcm(std::vector<float>(AudioData, AudioData + SampleCount));
-	write_wav_from_float("C:/Users/Collin/Downloads/output.wav", downsized.data(), downsized.size(), 16000, 1);
-
 	std::string Transcript = whisperInstance->Transcribe(downsized.data(), downsized.size());
 
 	return FString(UTF8_TO_TCHAR(Transcript.c_str()));
