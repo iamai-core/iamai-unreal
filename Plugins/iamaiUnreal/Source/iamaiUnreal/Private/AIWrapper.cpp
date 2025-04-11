@@ -87,7 +87,8 @@ void UAIWrapper::SetBatchSize(int32 BatchSize) {
 #include <cstdint>
 #include <algorithm>
 
-void write_wav_from_float(const std::string& filename, const float* pcm_float, size_t num_samples, int sample_rate, int num_channels = 1) {
+void write_wav_from_float(const std::string& filename, float* pcm_float, size_t num_samples, int sample_rate, int num_channels = 1) {
+	
 	std::ofstream file(filename, std::ios::binary);
 
 	std::vector<int16_t> pcm_int(num_samples);
@@ -118,28 +119,36 @@ void write_wav_from_float(const std::string& filename, const float* pcm_float, s
 	file.write("data", 4);
 	file.write(reinterpret_cast<const char*>(&data_chunk_size), 4);
 	file.write(reinterpret_cast<const char*>(pcm_int.data()), data_chunk_size);
+
+}
+
+std::vector<float> clean_pcm(const std::vector<float>& input) {
+
+	std::vector<float> output;
+	float average, sum;
+
+	for (size_t i = 0; i + 2 < input.size(); i += 3) {
+
+		sum = input[i] + input[i + 1] + input[i + 2];
+		average = std::clamp(sum / 3.0f, -1.0f, 1.0f);
+
+		if (average != 0.0f) output.push_back(average);
+
+	}
+
+	return output;
+
 }
 
 FString UAIWrapper::Transcribe(float* AudioData, int SampleCount) {
 
 	if (!iamaiInstance) return "";
 
-	std::string temp = "std::vector<float> = {";
+	std::vector<float> downsized = clean_pcm(std::vector<float>(AudioData, AudioData + SampleCount));
+	write_wav_from_float("C:/Users/Collin/Downloads/output.wav", downsized.data(), downsized.size(), 16000, 1);
 
-	for (int32 i = 0; i < SampleCount; ++i) {
+	std::string Transcript = whisperInstance->Transcribe(downsized.data(), downsized.size());
 
-		temp += std::to_string(AudioData[i]) + "f, ";
-		
-	}
-
-	temp += "}";
-
-
-	write_wav_from_float("C:/Users/Collin/Downloads/output.wav", AudioData, SampleCount, 48000, 2);
-
-	UE_LOG(LogTemp, Warning, TEXT("%s"), UTF8_TO_TCHAR(temp.c_str()));
-	std::string Transcript = whisperInstance->Transcribe(AudioData, SampleCount);
-
-	return FString();
+	return FString(UTF8_TO_TCHAR(Transcript.c_str()));
 
 }

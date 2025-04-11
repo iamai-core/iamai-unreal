@@ -45,15 +45,15 @@ private:
     SetTranslateFunction _setTranslate;
     TranscribeFunction _transcribe;
 
-    template<typename T>
+     template<typename T>
     T GetFunction(const char* funcName) {
 
         void* funcPtr = GetProcAddress(DllHandle, funcName);
         if (!funcPtr) {
-
+            
             int errorCode = GetLastError();
             throw std::runtime_error("Failed to get proc address for " + std::string(funcName) + ". Error code: " + std::to_string(errorCode));
-
+        
         }
 
         return reinterpret_cast<T>(funcPtr);

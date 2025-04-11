@@ -32,7 +32,7 @@ int32 UiamaiVoiceInput::OnGenerateAudio(float* OutAudio, int32 NumSamples) {
 
 	int32 SamplesGenerated = Super::OnGenerateAudio(OutAudio, NumSamples);
 
-	for (int32 i = 0; i < SamplesGenerated; ++i) m_pcmData.push_back(OutAudio[i]);
+	for (int32 i = 0; i < SamplesGenerated; i += 2) m_pcmData.push_back((OutAudio[i] + OutAudio[i + 1]) / 2.0f);
 
 	return SamplesGenerated;
 
