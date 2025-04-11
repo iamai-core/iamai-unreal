@@ -1,5 +1,6 @@
 // Some copyright should be here...
 
+using System.IO;
 using UnrealBuildTool;
 
 public class iamaiUnreal : ModuleRules {

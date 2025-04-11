@@ -9,7 +9,7 @@
 
 #include "InitializeAI.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAIWrapperCompleted, bool, bSuccess, UAIWrapper*, Wrapper);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAIWraperInitialized, bool, bSuccess, UAIWrapper*, Wrapper);
 
 /**
  * Initialize the AI model with the given model name
@@ -24,14 +24,15 @@ class IAMAIUNREAL_API UInitializeAI : public UBlueprintAsyncActionBase {
 public:
 
 	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Initialize AI", Category = "iamai core"))
-	static UInitializeAI* Initialize(const FString& ModelName);
+	static UInitializeAI* Initialize(const FString& IamaiModel, const FString& WhisperModel);
 
 	UPROPERTY(BlueprintAssignable)
-	FOnAIWrapperCompleted OnCompleted;
+	FAIWraperInitialized OnCompleted;
 
 protected:
 
 	virtual void Activate() override;
-	FString m_modelName;
+	FString m_iamaiModel;
+	FString m_whisperModel;
 
 };

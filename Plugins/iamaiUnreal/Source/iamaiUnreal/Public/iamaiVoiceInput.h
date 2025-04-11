@@ -27,13 +27,13 @@ public:
 
     float* GetAudioData() {
 
-        return EnvelopeHistory;
+        return m_pcmData.data();
 
 	}
 
     const int32 GetNumSamples() {
 
-        return Samples;
+        return m_pcmData.size();
 
     }
 
@@ -47,8 +47,7 @@ private:
 
 	AActor* OwnerActor;
 
-    float* EnvelopeHistory;
-    int32 Samples;
+    std::vector<float> m_pcmData;
 
 	bool bIsCapturing = false;
 

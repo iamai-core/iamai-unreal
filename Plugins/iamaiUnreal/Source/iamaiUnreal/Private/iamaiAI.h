@@ -10,17 +10,15 @@
 
 #include "Misc/Paths.h"
 
-namespace fs = std::filesystem;
-
-class iamai_AI {
+class iamaiAI {
 
 public:
 
-    iamai_AI(const std::string& modelName);
-    ~iamai_AI();
+    iamaiAI(const std::string& modelName);
+    ~iamaiAI();
 
-    iamai_AI(const iamai_AI&) = delete;
-    iamai_AI& operator=(const iamai_AI&) = delete;
+    iamaiAI(const iamaiAI&) = delete;
+    iamaiAI& operator=(const iamaiAI&) = delete;
 
     std::string Generate(const std::string& prompt, int maxLength = 4096);
 
@@ -38,7 +36,7 @@ public:
 
 private:
 
-    HMODULE iamaiDllHandle;
+    HMODULE DllHandle;
     void* ctx = nullptr;
 
     bool disposed = false;
@@ -58,13 +56,14 @@ private:
     FreeFunction _free;
 
     template<typename T>
+    T GetFunction(const char* funcName) {
 
-    T GetFunction(const HMODULE& dll, const char* funcName) {
-
-        void* funcPtr = GetProcAddress(dll, funcName);
+        void* funcPtr = GetProcAddress(DllHandle, funcName);
         if (!funcPtr) {
+            
             int errorCode = GetLastError();
             throw std::runtime_error("Failed to get proc address for " + std::string(funcName) + ". Error code: " + std::to_string(errorCode));
+        
         }
 
         return reinterpret_cast<T>(funcPtr);

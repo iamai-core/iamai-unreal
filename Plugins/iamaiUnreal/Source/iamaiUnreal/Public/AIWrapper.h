@@ -7,8 +7,8 @@
 
 #include <memory>
 
-#include "iamai_AI.h"
-#include "WhisperWrapper.h"
+#include "iamaiAI.h"
+#include "WhisperAI.h"
 
 #include "AIWrapper.generated.h"
 
@@ -22,8 +22,8 @@ class IAMAIUNREAL_API UAIWrapper : public UObject {
 
 private:
 
-	std::unique_ptr<iamai_AI> AIInstance;
-	std::unique_ptr<FWhisperWrapper> WhisperInstance;
+	std::unique_ptr<iamaiAI> iamaiInstance;
+	std::unique_ptr<WhisperAI> whisperInstance;
 
 public:
 
@@ -31,11 +31,19 @@ public:
 	virtual ~UAIWrapper();
 
 	/**
-	 * Initialize the AI with a specific model
+	 * Initialize the Iamai AI with a specific model
 	 * @param ModelName - Name of the model directory to load
 	 * @return Whether initialization was successful
 	 */
-	bool Initialize(const FString& ModelName);
+	bool InitializeIamai(const FString& ModelName);
+
+
+	/**
+	 * Initialize the Whisper AI with a specific model
+	 * @param ModelName - Name of the model directory to load
+	 * @return Whether initialization was successful
+	 */
+	bool InitializeWhisper(const FString& ModelName);
 
 
 	/**
