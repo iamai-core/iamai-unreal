@@ -1,6 +1,5 @@
 #include "InitializeAI.h"
 
-#include "iamaiUnreal.h"
 #include "Async/Async.h"
 
 UInitializeAI* UInitializeAI::Initialize(const FString& IamaiModel, const FString& WhisperModel) {

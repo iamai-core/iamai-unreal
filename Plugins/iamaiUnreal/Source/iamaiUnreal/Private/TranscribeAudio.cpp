@@ -3,6 +3,8 @@
 #include "iamaiVoiceInput.h"
 #include "AIWrapper.h"
 
+#include "Async/Async.h"
+
 UTranscribeAudio::UTranscribeAudio() {
 
 }

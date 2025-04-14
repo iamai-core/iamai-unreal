@@ -2,15 +2,16 @@
 
 #include "CoreMinimal.h"
 
-#include <iostream>
+#include <windows.h>
 #include <string>
+#include <iostream>
 #include <filesystem>
 #include <memory>
-#include <windows.h>
 
 #include "Misc/Paths.h"
 
-class iamaiAI {
+
+class IAMAIUNREAL_API iamaiAI {
 
 public:
 

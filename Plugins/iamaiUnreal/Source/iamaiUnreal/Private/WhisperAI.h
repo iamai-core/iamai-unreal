@@ -10,7 +10,7 @@
 
 #include "Misc/Paths.h"
 
-class WhisperAI {
+class IAMAIUNREAL_API WhisperAI {
 
 public:
 
