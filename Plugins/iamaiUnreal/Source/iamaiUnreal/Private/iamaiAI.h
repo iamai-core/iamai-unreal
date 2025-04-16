@@ -16,6 +16,7 @@ class IAMAIUNREAL_API iamaiAI {
 public:
 
     iamaiAI(const std::string& modelName);
+    iamaiAI(const std::string& modelName, int size, int tokens = 512, int batch = 512, int threads = 1);
     ~iamaiAI();
 
     iamaiAI(const iamaiAI&) = delete;
@@ -27,14 +28,6 @@ public:
         _setMaxTokens(ctx, maxTokens);
     }
 
-    void SetThreads(int nThreads) {
-        _setThreads(ctx, nThreads);
-    }
-
-    void SetBatchSize(int batchSize) {
-        _setBatchSize(ctx, batchSize);
-    }
-
 private:
 
     HMODULE DllHandle;
@@ -43,17 +36,15 @@ private:
     bool disposed = false;
 
     typedef void* (*InitFunction)(const char* modelPath);
+    typedef void* (*FullInitFunction)(const char* modelPath, int size, int tokens, int batch, int threads);
     typedef bool (*GenerateFunction)(void* context, const char* prompt, char* output, int maxLength);
     typedef void (*SetMaxTokensFunction)(void* context, int maxTokens);
-    typedef void (*SetThreadsFunction)(void* context, int nThreads);
-    typedef void (*SetBatchSizeFunction)(void* context, int batchSize);
     typedef void (*FreeFunction)(void* context);
 
     InitFunction _init;
+    FullInitFunction _fullInit;
     GenerateFunction _generate;
     SetMaxTokensFunction _setMaxTokens;
-    SetThreadsFunction _setThreads;
-    SetBatchSizeFunction _setBatchSize;
     FreeFunction _free;
 
     template<typename T>

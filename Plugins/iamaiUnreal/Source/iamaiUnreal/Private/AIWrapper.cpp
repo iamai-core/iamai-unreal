@@ -12,12 +12,11 @@ UAIWrapper::~UAIWrapper() {
 	// The unique_ptr will handle cleanup automatically
 }
 
-bool UAIWrapper::InitializeIamai(const FString& ModelName) {
+bool UAIWrapper::DefaultInitializeIamai(const FString& ModelName) {
 
 	try {
 
 		iamaiInstance = std::make_unique<iamaiAI>(TCHAR_TO_UTF8(*ModelName));
-		
 		return true;
 
 	} catch (const std::exception& e) {
@@ -29,12 +28,27 @@ bool UAIWrapper::InitializeIamai(const FString& ModelName) {
 
 }
 
-bool UAIWrapper::InitializeWhisper(const FString& ModelName) {
+bool UAIWrapper::InitializeIamai(const FString& ModelName, int size, int tokens, int batch, int threads) {
+
+	try {
+
+		iamaiInstance = std::make_unique<iamaiAI>(TCHAR_TO_UTF8(*ModelName), size, tokens, batch, threads);		
+		return true;
+
+	} catch (const std::exception& e) {
+
+		UE_LOG(LogTemp, Error, TEXT("AI initialization error: %s"), UTF8_TO_TCHAR(e.what()));
+		return false;
+
+	}
+
+}
+
+bool UAIWrapper::InitializeWhisper(const FString& ModelName, int threads) {
 
 	try {
 
 		whisperInstance = std::make_unique<WhisperAI>(TCHAR_TO_UTF8(*ModelName));
-
 		return true;
 
 	} catch (const std::exception& e) {
@@ -47,37 +61,32 @@ bool UAIWrapper::InitializeWhisper(const FString& ModelName) {
 }
 
 FString UAIWrapper::Generate(const std::string& Prompt, int32 MaxLength) {
+
 	if (!iamaiInstance) {
+
 		UE_LOG(LogTemp, Error, TEXT("AI not initialized"));
 		return TEXT("Error: AI not initialized");
+
 	}
 
 	try {
+
 		std::string result = iamaiInstance->Generate(Prompt, MaxLength);
 		return UTF8_TO_TCHAR(result.c_str());
+
 	} catch (const std::exception& e) {
+
 		UE_LOG(LogTemp, Error, TEXT("Generation error: %s"), UTF8_TO_TCHAR(e.what()));
 		return FString::Printf(TEXT("Error: %s"), UTF8_TO_TCHAR(e.what()));
+
 	}
 
 }
 
 void UAIWrapper::SetMaxTokens(int32 MaxTokens) {
-	if (iamaiInstance) {
-		iamaiInstance->SetMaxTokens(MaxTokens);
-	}
-}
 
-void UAIWrapper::SetThreads(int32 NumThreads) {
-	if (iamaiInstance) {
-		iamaiInstance->SetThreads(NumThreads);
-	}
-}
+	if (iamaiInstance) iamaiInstance->SetMaxTokens(MaxTokens);
 
-void UAIWrapper::SetBatchSize(int32 BatchSize) {
-	if (iamaiInstance) {
-		iamaiInstance->SetBatchSize(BatchSize);
-	}
 }
 
 std::vector<float> clean_pcm(const std::vector<float>& input) {

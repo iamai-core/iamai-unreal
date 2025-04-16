@@ -35,7 +35,14 @@ public:
 	 * @param ModelName - Name of the model directory to load
 	 * @return Whether initialization was successful
 	 */
-	bool InitializeIamai(const FString& ModelName);
+	bool DefaultInitializeIamai(const FString& ModelName);
+
+	/**
+	 * Initialize the Iamai AI with a specific model and parameters
+	 * @param ModelName - Name of the model directory to load
+	 * @return Whether initialization was successful
+	 */
+	bool InitializeIamai(const FString& ModelName, int size = 8192, int tokens = 512, int batch = 512, int threads = 1);
 
 
 	/**
@@ -43,7 +50,7 @@ public:
 	 * @param ModelName - Name of the model directory to load
 	 * @return Whether initialization was successful
 	 */
-	bool InitializeWhisper(const FString& ModelName);
+	bool InitializeWhisper(const FString& ModelName, int threads = 1);
 
 
 	/**
@@ -60,20 +67,6 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "iamai AI")
 	void SetMaxTokens(int32 MaxTokens);
-
-	/**
-	 * Set the number of threads to use
-	 * @param NumThreads - Number of threads
-	 */
-	UFUNCTION(BlueprintCallable, Category = "iamai AI")
-	void SetThreads(int32 NumThreads);
-
-	/**
-	 * Set the batch size for generation
-	 * @param BatchSize - Batch size
-	 */
-	UFUNCTION(BlueprintCallable, Category = "iamai AI")
-	void SetBatchSize(int32 BatchSize);
 
 	/**
 	* Transcribe audio to text from float array

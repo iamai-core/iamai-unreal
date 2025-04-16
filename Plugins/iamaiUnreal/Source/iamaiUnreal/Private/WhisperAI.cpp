@@ -1,6 +1,6 @@
 #include "WhisperAI.h"
 
-WhisperAI::WhisperAI(const std::string& modelName) {
+WhisperAI::WhisperAI(const std::string& modelName, int threads) {
 
     FString ProjectDirFString = FPaths::ProjectDir();
     FString PluginDirFString = FPaths::Combine(ProjectDirFString, TEXT("Plugins"), TEXT("iamaiUnreal"));
@@ -31,13 +31,13 @@ WhisperAI::WhisperAI(const std::string& modelName) {
     // Get Whisper function pointers
     _init = GetFunction<InitFunction>("Init");
     _free = GetFunction<FreeFunction>("Free");
-    _setThreads = GetFunction<SetThreadsFunction>("SetThreads");
+    _setThreads = GetFunction<SetThreadsFunction>("setThreads");
     _setLanguage = GetFunction<SetLanguageFunction>("setLanguage");
     _setTranslate = GetFunction<SetTranslateFunction>("setTranslate");
     _transcribe = GetFunction<TranscribeFunction>("Transcrible");
 
     // Initialize the model
-    ctx = _init(modelPath.c_str());
+    ctx = _init(modelPath.c_str(), threads);
     if (!ctx) {
         throw std::runtime_error("Failed to initialize whisper model");
     }

@@ -1,0 +1,81 @@
+﻿#include "LoopingTranscribeAudio.h"
+
+#include "iamaiVoiceInput.h"
+#include "AIWrapper.h"
+
+#include "Async/Async.h"
+
+ULoopingTranscribeAudio::ULoopingTranscribeAudio() {
+
+}
+
+ULoopingTranscribeAudio* ULoopingTranscribeAudio::Transcribe(UObject* WorldContextObject, float time, UAIWrapper* AIWrapper, UiamaiVoiceInput* iamaiVoiceInput, FOnTextTranscribedDelegate InDelegate) {
+
+	ULoopingTranscribeAudio* Node = NewObject<ULoopingTranscribeAudio>();
+
+	Node->m_aiWrapper = AIWrapper;
+	Node->m_iamaiVoiceInput = iamaiVoiceInput;
+	Node->m_time = time;
+	Node->TranscribedDelegate = InDelegate;
+	Node->WorldContextObject = WorldContextObject;
+
+	return Node;
+
+}
+
+void ULoopingTranscribeAudio::Activate() {
+
+	if (!m_aiWrapper || !m_iamaiVoiceInput || !TranscribedDelegate.IsBound()) return;
+
+	if (UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContextObject)) {
+		
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ULoopingTranscribeAudio::LoopingTranscribe, m_time, true);
+		OnTimerCreated.Broadcast(true, TimerHandle);
+
+	}
+
+}
+
+void ULoopingTranscribeAudio::LoopingTranscribe() {
+
+	if (!m_aiWrapper || !m_iamaiVoiceInput || !TranscribedDelegate.IsBound()) {
+
+		TimerHandle.Invalidate();
+		return;
+
+	}
+
+	Async(EAsyncExecution::ThreadPool, [this]() {
+
+		std::vector<float> pcmf32 = m_iamaiVoiceInput->GetAndClearAudioData();
+		FString TranscribedText = m_aiWrapper->Transcribe(pcmf32.data(), pcmf32.size());
+
+		Async(EAsyncExecution::TaskGraphMainThread, [this, TranscribedText]() {
+
+			if (TranscribedDelegate.IsBound()) TranscribedDelegate.Execute(!TranscribedText.IsEmpty(), TranscribedText);
+
+			});
+
+		});
+
+}
+
+
+
+/*
+void ULoopingTranscribeAudio::Activate() {
+
+	if (!m_aiWrapper || !m_iamaiVoiceInput || !TranscribedDelegate.IsBound()) return;
+
+	Async(EAsyncExecution::ThreadPool, [this]() {
+
+		if (!m_aiWrapper || !m_iamaiVoiceInput || !TranscribedDelegate.IsBound()) return;
+
+		std::vector<float> pcmf32 = m_iamaiVoiceInput->GetAndClearAudioData();
+		FString TranscribedText = m_aiWrapper->Transcribe(pcmf32.data(), pcmf32.size());
+		TranscribedDelegate.Execute(!TranscribedText.IsEmpty(), TranscribedText);
+
+		});
+
+}
+*/

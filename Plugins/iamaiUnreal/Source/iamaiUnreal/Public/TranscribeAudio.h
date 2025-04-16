@@ -7,6 +7,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTextTranscribed, bool, bSuccess, const FString&, Text);
 
+
 class AIWrapper;
 class UiamaiVoiceInput;
 
@@ -20,7 +21,7 @@ public:
 	UTranscribeAudio();
 
 	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Transcribe Audio", Category = "Iamai Core"))
-	static UTranscribeAudio* Transcribe(UAIWrapper* AIWrapper, UiamaiVoiceInput* iamaiVoiceInput);
+	static UTranscribeAudio* Transcribe( UAIWrapper* AIWrapper, UiamaiVoiceInput* iamaiVoiceInput);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnTextTranscribed OnTextTranscribed;
@@ -28,6 +29,7 @@ public:
 protected:
 
 	virtual void Activate() override;
+
 	UAIWrapper* m_aiWrapper = nullptr;
 	UiamaiVoiceInput* m_iamaiVoiceInput = nullptr;
 

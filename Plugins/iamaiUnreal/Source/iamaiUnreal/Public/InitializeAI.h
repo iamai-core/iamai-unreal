@@ -23,8 +23,23 @@ class IAMAIUNREAL_API UInitializeAI : public UBlueprintAsyncActionBase {
 
 public:
 
-	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Initialize AI", Category = "iamai core"))
-	static UInitializeAI* Initialize(const FString& IamaiModel, const FString& WhisperModel);
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Create and Initialize iamai and whisper", Category = "iamai core"))
+	static UInitializeAI* CreateInitializeAll(const FString& IamaiModel, const FString& WhisperModel);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Create and Initialize iamai", Category = "iamai core"))
+	static UInitializeAI* CreateInitializeIamai(const FString& IamaiModel);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Create and Initialize iamai with Paramaters", Category = "iamai core"))
+	static UInitializeAI* CreateInitializeIamaiParamaters(const FString& IamaiModel, int size = 8192, int tokens = 512, int batch = 8192, int threads = 1);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Initialize iamai", Category = "iamai core"))
+	static UInitializeAI* InitializeIamai(UAIWrapper* Wrapper, const FString& IamaiModel, int tokens = 512, int batch = 1, int threads = 1);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Create and Initialize whisper", Category = "iamai core"))
+	static UInitializeAI* CreateInitializeWhisper( const FString& WhisperModel, int threads = 1);
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", DisplayName = "Initialize whisper", Category = "iamai core"))
+	static UInitializeAI* InitializeWhisper(UAIWrapper* Wrapper, const FString& WhisperModel, int threads = 1);
 
 	UPROPERTY(BlueprintAssignable)
 	FAIWraperInitialized OnCompleted;
@@ -32,7 +47,16 @@ public:
 protected:
 
 	virtual void Activate() override;
+
 	FString m_iamaiModel;
 	FString m_whisperModel;
+	UAIWrapper* m_aiWrapper = nullptr;
+
+	int m_size = -1;
+	int m_iamaiTokens = 512;
+	int m_iamaiBatch = 8192;
+	int m_iamaiThreads = 1;
+
+	int m_whisperThreads = 1;
 
 };

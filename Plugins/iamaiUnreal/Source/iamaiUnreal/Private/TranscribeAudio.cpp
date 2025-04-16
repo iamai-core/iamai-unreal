@@ -12,11 +12,14 @@ UTranscribeAudio::UTranscribeAudio() {
 UTranscribeAudio* UTranscribeAudio::Transcribe(UAIWrapper* AIWrapper, UiamaiVoiceInput* iamaiVoiceInput) {
 
 	UTranscribeAudio* Node = NewObject<UTranscribeAudio>();
+
 	Node->m_aiWrapper = AIWrapper;
 	Node->m_iamaiVoiceInput = iamaiVoiceInput;
+
 	return Node;
 
 }
+
 
 void UTranscribeAudio::Activate() {
 
@@ -29,9 +32,8 @@ void UTranscribeAudio::Activate() {
 
 	Async(EAsyncExecution::ThreadPool, [this]() {
 
-		float* data = m_iamaiVoiceInput->GetAudioData();
-		int32 size = m_iamaiVoiceInput->GetNumSamples();
-		FString TranscribedText = m_aiWrapper->Transcribe(data, size);
+		std::vector<float> pcmf32 = m_iamaiVoiceInput->GetAndClearAudioData();
+		FString TranscribedText = m_aiWrapper->Transcribe(pcmf32.data(), pcmf32.size());
 
 		Async(EAsyncExecution::TaskGraphMainThread, [this, TranscribedText]() {
 
@@ -40,6 +42,4 @@ void UTranscribeAudio::Activate() {
 
 		});
 
-
 }
-

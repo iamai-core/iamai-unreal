@@ -25,17 +25,13 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Voice Input")
     bool bRecordOnStartup = false;
 
-    float* GetAudioData() {
-
-        return m_pcmData.data();
-
-	}
-
-    const int32 GetNumSamples() {
-
-        return m_pcmData.size();
-
+    std::vector<float> GetAndClearAudioData() {
+        return std::move(m_pcmData);
     }
+
+    std::vector<float>& GetAudioData() {
+        return m_pcmData;
+	}
 
 protected:
 
