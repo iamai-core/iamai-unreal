@@ -4,9 +4,20 @@
 
 #include <iostream>
 #include <string>
-#include <filesystem>
 #include <memory>
+#include <mutex>
+
+#if PLATFORM_WINDOWS
+
 #include <windows.h>
+using LibHandle = HMODULE;
+
+#else
+
+#include <dlfcn.h>
+using LibHandle = void*;
+
+#endif
 
 #include "Misc/Paths.h"
 
@@ -27,7 +38,9 @@ public:
 
 private:
 
-	HMODULE DllHandle = nullptr;
+	std::mutex transcribeMutex;
+
+	LibHandle DllHandle = nullptr;
 	void* ctx = nullptr;
 	bool disposed = false;
 
@@ -48,13 +61,20 @@ private:
 	template<typename T>
 	T GetFunction(const char* funcName) {
 
+#if PLATFORM_WINDOWS
+
 		void* funcPtr = GetProcAddress(DllHandle, funcName);
 		if (!funcPtr) {
-
-			int errorCode = GetLastError();
-			throw std::runtime_error("Failed to get proc address for " + std::string(funcName) + ". Error code: " + std::to_string(errorCode));
-
+			int error = GetLastError();
+			throw std::runtime_error("Failed to get proc address for " + std::string(funcName) + ". Error code: " + std::to_string(error));
 		}
+
+#else
+
+		void* funcPtr = dlsym(DllHandle, funcName);
+		if (!funcPtr) throw std::runtime_error("Failed to get symbol: " + std::string(funcName) + ". Error: " + std::string(dlerror()));
+
+#endif
 
 		return reinterpret_cast<T>(funcPtr);
 

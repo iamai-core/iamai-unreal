@@ -1,34 +1,48 @@
 #include "WhisperAI.h"
 
 WhisperAI::WhisperAI(const std::string& modelName, int threads) {
+    FString ProjectDir = FPaths::ProjectDir();
+    FString PluginDir = FPaths::Combine(ProjectDir, TEXT("Plugins"), TEXT("iamaiUnreal"));
+    FString LibDir = FPaths::Combine(PluginDir, TEXT("ThirdParty"));
+    FString ModelPath = FPaths::Combine(PluginDir, TEXT("Models"), *FString(modelName.c_str()));
 
-    FString ProjectDirFString = FPaths::ProjectDir();
-    FString PluginDirFString = FPaths::Combine(ProjectDirFString, TEXT("Plugins"), TEXT("iamaiUnreal"));
-    FString DllDirectoryFString = FPaths::Combine(PluginDirFString, TEXT("ThirdParty"));
-    FString DllPathFString = FPaths::Combine(DllDirectoryFString, TEXT("whisper-interface.dll"));
-    FString ModelPathFString = FPaths::Combine(PluginDirFString, TEXT("Models"), *FString(modelName.c_str()));
+    std::string libName;
+#if PLATFORM_WINDOWS
 
-    // Convert to standard strings
-    std::string dllDirectory = TCHAR_TO_UTF8(*DllDirectoryFString);
-    std::string dllPath = TCHAR_TO_UTF8(*DllPathFString);
-    std::string modelPath = TCHAR_TO_UTF8(*ModelPathFString);
+    libName = "whisper-interface.dll";
 
-    if (!std::filesystem::exists(dllDirectory)) {
+#else
 
-        throw std::runtime_error("DLL directory not found: " + dllDirectory);
+    libName = "libwhisper-interface.dylib";
 
+#endif
+
+    FString LibPath = FPaths::Combine(LibDir, UTF8_TO_TCHAR(libName.c_str()));
+    std::string libPathStr = TCHAR_TO_UTF8(*LibPath);
+    std::string modelPathStr = TCHAR_TO_UTF8(*ModelPath);
+
+    if (!FPaths::FileExists(LibPath)) {
+        throw std::runtime_error("Shared library not found: " + libPathStr);
     }
 
-    SetDllDirectoryA(dllDirectory.c_str());
+    std::cout << "Loading whisper library from: " << libPathStr << std::endl;
 
-    // Load the whisper-interface DLL
-    DllHandle = LoadLibraryA(dllPath.c_str());
+#if PLATFORM_WINDOWS
+
+    SetDllDirectoryA(TCHAR_TO_UTF8(*LibDir));
+    DllHandle = LoadLibraryA(libPathStr.c_str());
     if (!DllHandle) {
-        int errorCode = GetLastError();
-        throw std::runtime_error("Failed to load whisper-interface DLL. Error code: " + std::to_string(errorCode));
+        int err = GetLastError();
+        throw std::runtime_error("Failed to load whisper DLL. Error code: " + std::to_string(err));
     }
 
-    // Get Whisper function pointers
+#else
+
+    DllHandle = dlopen(libPathStr.c_str(), RTLD_LAZY);
+    if (!DllHandle) throw std::runtime_error("Failed to load whisper dylib: " + std::string(dlerror()));
+
+#endif
+
     _init = GetFunction<InitFunction>("Init");
     _free = GetFunction<FreeFunction>("Free");
     _setThreads = GetFunction<SetThreadsFunction>("setThreads");
@@ -36,13 +50,11 @@ WhisperAI::WhisperAI(const std::string& modelName, int threads) {
     _setTranslate = GetFunction<SetTranslateFunction>("setTranslate");
     _transcribe = GetFunction<TranscribeFunction>("Transcrible");
 
-    // Initialize the model
-    ctx = _init(modelPath.c_str(), threads);
-    if (!ctx) {
-        throw std::runtime_error("Failed to initialize whisper model");
-    }
+    ctx = _init(modelPathStr.c_str(), threads);
+    if (!ctx) throw std::runtime_error("Failed to initialize whisper model");
 
 }
+
 
 void WhisperAI::SetThreads(int nThreads) {
     _setThreads(ctx, nThreads);
@@ -58,6 +70,13 @@ void WhisperAI::SetTranslate(bool translate) {
 
 std::string WhisperAI::Transcribe(float* data, int samples) {
 
+    if (!ctx || !data || samples <= 0) {
+        UE_LOG(LogTemp, Error, TEXT("Invalid params passed to _transcribe"));
+        return nullptr;
+    }
+
+    std::lock_guard<std::mutex> lock(transcribeMutex);
+
     const char* result = _transcribe(ctx, data, samples);
     return result ? std::string(result) : "";
 
@@ -68,10 +87,24 @@ WhisperAI::~WhisperAI() {
     if (!disposed) {
 
         if (ctx) _free(ctx);
-        if (DllHandle) FreeLibrary(DllHandle);
+
+        if (DllHandle) {
+
+#if PLATFORM_WINDOWS
+
+            FreeLibrary(DllHandle);
+
+#else
+
+            dlclose(DllHandle);
+
+#endif
+
+            DllHandle = nullptr;
+
+        }
 
         ctx = nullptr;
-        DllHandle = nullptr;
         disposed = true;
 
     }
