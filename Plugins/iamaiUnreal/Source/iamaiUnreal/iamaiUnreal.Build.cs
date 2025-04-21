@@ -11,6 +11,9 @@ public class iamaiUnreal : ModuleRules {
         bEnableExceptions = true;
         PublicDefinitions.Add( "PLATFORM_EXCEPTIONS_DISABLED=0" );
 
+        PublicDefinitions.Add( "NOMINMAX=1" );
+
+
         PublicDependencyModuleNames.AddRange( new string[] {
                 "Core",
                 "CoreUObject",

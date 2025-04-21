@@ -68,11 +68,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "iamai AI")
 	void SetMaxTokens(int32 MaxTokens);
 
+
 	/**
 	* Transcribe audio to text from float array
 	* @param AudioData - Pointer to the audio data
 	* @param SampleCount - Number of samples in the audio data
 	*/
-	FString Transcribe(float* AudioData, int SampleCount);
+	FString Transcribe(float* AudioData, int SampleCount, float threshold);
 
 };

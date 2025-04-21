@@ -1,7 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "Kismet/BlueprintAsyncActionBase.h"
+#include "TimerManager.h"
 
 #include "LoopingTranscribeAudio.generated.h"
 

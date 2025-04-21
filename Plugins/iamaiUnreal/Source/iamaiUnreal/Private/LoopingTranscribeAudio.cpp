@@ -3,6 +3,8 @@
 #include "iamaiVoiceInput.h"
 #include "AIWrapper.h"
 
+#include "Engine/Engine.h"
+#include "Engine/World.h"
 #include "Async/Async.h"
 
 ULoopingTranscribeAudio::ULoopingTranscribeAudio() {
@@ -48,7 +50,7 @@ void ULoopingTranscribeAudio::LoopingTranscribe() {
 	Async(EAsyncExecution::ThreadPool, [this]() {
 
 		std::vector<float> pcmf32 = m_iamaiVoiceInput->GetAndClearAudioData();
-		FString TranscribedText = m_aiWrapper->Transcribe(pcmf32.data(), pcmf32.size());
+		FString TranscribedText = m_aiWrapper->Transcribe(pcmf32.data(), pcmf32.size(), m_iamaiVoiceInput->fVoiceSensitivity);
 
 		Async(EAsyncExecution::TaskGraphMainThread, [this, TranscribedText]() {
 

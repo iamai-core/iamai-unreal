@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CoreMinimal.h"
 
 #ifdef PlaySound
 #undef PlaySound
@@ -24,6 +23,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Voice Input")
     bool bRecordOnStartup = false;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Voice Input", meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+    float fVoiceSensitivity = 0.15f;
 
     std::vector<float> GetAndClearAudioData() {
         return std::move(m_pcmData);

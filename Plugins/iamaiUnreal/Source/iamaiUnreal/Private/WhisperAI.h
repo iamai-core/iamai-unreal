@@ -19,8 +19,6 @@ using LibHandle = void*;
 
 #endif
 
-#include "Misc/Paths.h"
-
 class IAMAIUNREAL_API WhisperAI {
 
 public:

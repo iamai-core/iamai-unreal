@@ -1,6 +1,11 @@
 #include "WhisperAI.h"
 
+#include "Misc/Paths.h"
+
 WhisperAI::WhisperAI(const std::string& modelName, int threads) {
+
+	if (threads <= 0) throw std::invalid_argument("Threads must be greater than 0");
+
     FString ProjectDir = FPaths::ProjectDir();
     FString PluginDir = FPaths::Combine(ProjectDir, TEXT("Plugins"), TEXT("iamaiUnreal"));
     FString LibDir = FPaths::Combine(PluginDir, TEXT("ThirdParty"));

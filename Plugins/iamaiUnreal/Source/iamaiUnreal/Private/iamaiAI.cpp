@@ -1,5 +1,7 @@
 #include "iamaiAI.h"
 
+#include "Misc/Paths.h"
+
 iamaiAI::iamaiAI(const std::string& modelName) {
 
 	LoadDLL(modelName);

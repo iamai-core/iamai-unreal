@@ -89,7 +89,7 @@ void UAIWrapper::SetMaxTokens(int32 MaxTokens) {
 
 }
 
-std::vector<float> clean_pcm(const std::vector<float>& input) {
+std::vector<float> clean_pcm(const std::vector<float>& input, float threshold) {
 
 	std::vector<float> output;
 	float average, sum;
@@ -99,7 +99,7 @@ std::vector<float> clean_pcm(const std::vector<float>& input) {
 		sum = input[i] + input[i + 1] + input[i + 2];
 		average = std::clamp(sum / 3.0f, -1.0f, 1.0f);
 
-		if (average != 0.0f) output.push_back(average);
+		if (average >= threshold) output.push_back(average);
 
 	}
 
@@ -107,11 +107,13 @@ std::vector<float> clean_pcm(const std::vector<float>& input) {
 
 }
 
-FString UAIWrapper::Transcribe(float* AudioData, int SampleCount) {
+FString UAIWrapper::Transcribe(float* AudioData, int SampleCount, float threshold) {
 
 	if (!iamaiInstance) return "";
 
-	std::vector<float> downsized = clean_pcm(std::vector<float>(AudioData, AudioData + SampleCount));
+	std::vector<float> downsized = clean_pcm(std::vector<float>(AudioData, AudioData + SampleCount), threshold);
+	if (downsized.empty()) return "";
+
 	std::string Transcript = whisperInstance->Transcribe(downsized.data(), downsized.size());
 
 	return FString(UTF8_TO_TCHAR(Transcript.c_str()));

@@ -1,23 +1,7 @@
 #include "iamaiVoiceInput.h"
 
-#include "Engine/Engine.h"
-#include "Sound/SoundSubmix.h"
-#include <sstream>
-
 void UiamaiVoiceInput::BeginPlay() {
 	Super::BeginPlay();
-
-	/*
-	
-	SoundSubmix = NewObject<USoundSubmix>(GetTransientPackage(), USoundSubmix::StaticClass(), NAME_None, RF_Transient);
-	if (!SoundSubmix) {
-		UE_LOG(LogTemp, Error, TEXT("SoundSubmix is null in UIAmaiVoiceInput"));
-		return;
-	}
-
-	if (bRecordOnStartup) StartCapturingAudio();
-
-	*/
 
 }
 
