@@ -2,35 +2,48 @@
 
 #include "Misc/Paths.h"
 
-iamaiAI::iamaiAI(const std::string& modelName) {
+iamaiAI::iamaiAI(UGGUFModelAsset* model) {
 
-	LoadDLL(modelName);
+	LoadDLL();
 
-	// Initialize the model
-	ctx = _init(modelPath.c_str());
+	TempFilePath = SaveTempModelFile(model);
+	ctx = _init(TCHAR_TO_UTF8(*TempFilePath));
+
 	if (!ctx) throw std::runtime_error("Failed to initialize iamai model");
 
 }
 
-iamaiAI::iamaiAI(const std::string& modelName, int size, int tokens, int batch, int threads) {
+iamaiAI::iamaiAI(UGGUFModelAsset* model, int size, int tokens, int batch, int threads) {
 
 	if (size <= 0 || tokens <= 0 || batch <= 0 || threads <= 0) throw std::invalid_argument("Size, tokens, batch, and threads must be greater than 0");
 	if (size < batch) throw std::invalid_argument("Size must be greater than or equal to batch");
 
-	LoadDLL(modelName);
+	LoadDLL();
 
-	// Initialize the model context
-	ctx = _fullInit(modelPath.c_str(), size, tokens, batch, threads);
+	TempFilePath = SaveTempModelFile(model);
+	ctx = _fullInit(TCHAR_TO_UTF8(*TempFilePath), size, tokens, batch, threads);
+
 	if (!ctx) throw std::runtime_error("Failed to initialize iamai model");
 
 }
 
-void iamaiAI::LoadDLL(const std::string& modelName ) {
+FString iamaiAI::SaveTempModelFile(UGGUFModelAsset* model) {
+
+	if (!model || model->FileData.Num() == 0) throw std::invalid_argument("Model data is invalid or empty");
+
+	FString TempDir = FPaths::ProjectSavedDir();
+	FString UniqueFilename = FPaths::CreateTempFilename(*TempDir, TEXT("iamai_model_"), TEXT(".gguf"));
+	if (!FFileHelper::SaveArrayToFile(model->FileData, *UniqueFilename)) throw std::runtime_error("Failed to save temp model file");
+
+	return UniqueFilename;
+
+}
+
+void iamaiAI::LoadDLL() {
 
 	FString ProjectDirFString = FPaths::ProjectDir();
 	FString PluginDirFString = FPaths::Combine(ProjectDirFString, TEXT("Plugins"), TEXT("iamaiUnreal"));
 	FString LibDirectoryFString = FPaths::Combine(PluginDirFString, TEXT("ThirdParty"));
-	FString ModelPathFString = FPaths::Combine(PluginDirFString, TEXT("Models"), *FString(modelName.c_str()));
 
 	std::string libName;
 
@@ -46,7 +59,6 @@ void iamaiAI::LoadDLL(const std::string& modelName ) {
 
 	FString LibPathFString = FPaths::Combine(LibDirectoryFString, UTF8_TO_TCHAR(libName.c_str()));
 	std::string libPath = TCHAR_TO_UTF8(*LibPathFString);
-	modelPath = TCHAR_TO_UTF8(*ModelPathFString);
 
 	if (!FPaths::FileExists(UTF8_TO_TCHAR(libPath.c_str()))) throw std::runtime_error("Shared library not found: " + libPath);
 
@@ -118,6 +130,8 @@ iamaiAI::~iamaiAI() {
 			DllHandle = nullptr;
 
 		}
+
+		if (!TempFilePath.IsEmpty()) IFileManager::Get().Delete(*TempFilePath);
 
 		disposed = true;
 

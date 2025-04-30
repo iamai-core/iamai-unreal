@@ -2,16 +2,18 @@
 
 #include "Misc/Paths.h"
 
-WhisperAI::WhisperAI(const std::string& modelName, int threads) {
+WhisperAI::WhisperAI(UBinModelAsset* model, int threads) {
 
 	if (threads <= 0) throw std::invalid_argument("Threads must be greater than 0");
+
+    TempFilePath = SaveTempModelFile(model);
 
     FString ProjectDir = FPaths::ProjectDir();
     FString PluginDir = FPaths::Combine(ProjectDir, TEXT("Plugins"), TEXT("iamaiUnreal"));
     FString LibDir = FPaths::Combine(PluginDir, TEXT("ThirdParty"));
-    FString ModelPath = FPaths::Combine(PluginDir, TEXT("Models"), *FString(modelName.c_str()));
 
     std::string libName;
+
 #if PLATFORM_WINDOWS
 
     libName = "whisper-interface.dll";
@@ -24,11 +26,8 @@ WhisperAI::WhisperAI(const std::string& modelName, int threads) {
 
     FString LibPath = FPaths::Combine(LibDir, UTF8_TO_TCHAR(libName.c_str()));
     std::string libPathStr = TCHAR_TO_UTF8(*LibPath);
-    std::string modelPathStr = TCHAR_TO_UTF8(*ModelPath);
 
-    if (!FPaths::FileExists(LibPath)) {
-        throw std::runtime_error("Shared library not found: " + libPathStr);
-    }
+    if (!FPaths::FileExists(LibPath)) throw std::runtime_error("Shared library not found: " + libPathStr);
 
     std::cout << "Loading whisper library from: " << libPathStr << std::endl;
 
@@ -36,9 +35,12 @@ WhisperAI::WhisperAI(const std::string& modelName, int threads) {
 
     SetDllDirectoryA(TCHAR_TO_UTF8(*LibDir));
     DllHandle = LoadLibraryA(libPathStr.c_str());
+
     if (!DllHandle) {
+
         int err = GetLastError();
         throw std::runtime_error("Failed to load whisper DLL. Error code: " + std::to_string(err));
+
     }
 
 #else
@@ -55,7 +57,7 @@ WhisperAI::WhisperAI(const std::string& modelName, int threads) {
     _setTranslate = GetFunction<SetTranslateFunction>("setTranslate");
     _transcribe = GetFunction<TranscribeFunction>("Transcrible");
 
-    ctx = _init(modelPathStr.c_str(), threads);
+    ctx = _init(TCHAR_TO_UTF8(*TempFilePath), threads);
     if (!ctx) throw std::runtime_error("Failed to initialize whisper model");
 
 }
@@ -76,14 +78,28 @@ void WhisperAI::SetTranslate(bool translate) {
 std::string WhisperAI::Transcribe(float* data, int samples) {
 
     if (!ctx || !data || samples <= 0) {
+
         UE_LOG(LogTemp, Error, TEXT("Invalid params passed to _transcribe"));
-        return nullptr;
+        return "";
+
     }
 
     std::lock_guard<std::mutex> lock(transcribeMutex);
 
     const char* result = _transcribe(ctx, data, samples);
     return result ? std::string(result) : "";
+
+}
+
+FString WhisperAI::SaveTempModelFile(UBinModelAsset* model) {
+    
+    if (!model || model->FileData.Num() == 0) throw std::invalid_argument("Model data is invalid or empty");
+
+    FString TempDir = FPaths::ProjectSavedDir();
+    FString UniqueFilename = FPaths::CreateTempFilename(*TempDir, TEXT("whisper_model_"), TEXT(".gguf"));
+    if (!FFileHelper::SaveArrayToFile(model->FileData, *UniqueFilename)) throw std::runtime_error("Failed to save temp model file");
+
+    return UniqueFilename;
 
 }
 

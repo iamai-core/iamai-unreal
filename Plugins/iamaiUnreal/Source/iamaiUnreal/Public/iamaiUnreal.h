@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
+class IAssetTypeActions;
 
 class FiamaiUnrealModule : public IModuleInterface {
 
@@ -11,5 +12,9 @@ public:
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+
+private:
+
+	TSharedPtr<IAssetTypeActions> AssetTypeActions;
 
 };

@@ -49,12 +49,14 @@ void ULoopingTranscribeAudio::LoopingTranscribe() {
 
 	Async(EAsyncExecution::ThreadPool, [this]() {
 
-		std::vector<float> pcmf32 = m_iamaiVoiceInput->GetAndClearAudioData();
-		FString TranscribedText = m_aiWrapper->Transcribe(pcmf32.data(), pcmf32.size(), m_iamaiVoiceInput->fVoiceSensitivity);
+		TArray<float> pcmf32 = m_iamaiVoiceInput->GetAndClearAudioData();
+		FString TranscribedText = m_aiWrapper->Transcribe(pcmf32.GetData(), pcmf32.Num(), m_iamaiVoiceInput->fVoiceSensitivity);
 
-		Async(EAsyncExecution::TaskGraphMainThread, [this, TranscribedText]() {
+		FOnTextTranscribedDelegate DelegateCopy = TranscribedDelegate;
 
-			if (TranscribedDelegate.IsBound()) TranscribedDelegate.Execute(!TranscribedText.IsEmpty(), TranscribedText);
+		Async(EAsyncExecution::TaskGraphMainThread, [this, DelegateCopy, TranscribedText]() {
+
+			if (DelegateCopy.IsBound()) DelegateCopy.Execute(!TranscribedText.IsEmpty(), TranscribedText);
 
 			});
 

@@ -6,10 +6,13 @@
 #include <string>
 #include <memory>
 #include <mutex>
+#include "BinModelAsset.h"
 
 #if PLATFORM_WINDOWS
 
-#include <windows.h>
+#include "Windows/AllowWindowsPlatformTypes.h"
+#include "Windows.h"
+#include "Windows/HideWindowsPlatformTypes.h"
 using LibHandle = HMODULE;
 
 #else
@@ -23,7 +26,7 @@ class IAMAIUNREAL_API WhisperAI {
 
 public:
 
-	WhisperAI(const std::string& modelPath, int threads = 1);
+	WhisperAI(UBinModelAsset* model, int threads = 1);
 	~WhisperAI();
 
 	WhisperAI(const WhisperAI&) = delete;
@@ -35,6 +38,9 @@ public:
 	std::string Transcribe(float* data, int samples);
 
 private:
+
+	FString SaveTempModelFile(UBinModelAsset* model);
+	FString TempFilePath;
 
 	std::mutex transcribeMutex;
 

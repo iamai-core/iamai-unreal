@@ -9,6 +9,8 @@
 
 #include "iamaiAI.h"
 #include "WhisperAI.h"
+#include "GGUFModelAsset.h"
+#include "BinModelAsset.h"
 
 #include "AIWrapper.generated.h"
 
@@ -35,14 +37,14 @@ public:
 	 * @param ModelName - Name of the model directory to load
 	 * @return Whether initialization was successful
 	 */
-	bool DefaultInitializeIamai(const FString& ModelName);
+	bool DefaultInitializeIamai(UGGUFModelAsset* model);
 
 	/**
 	 * Initialize the Iamai AI with a specific model and parameters
 	 * @param ModelName - Name of the model directory to load
 	 * @return Whether initialization was successful
 	 */
-	bool InitializeIamai(const FString& ModelName, int size = 8192, int tokens = 512, int batch = 512, int threads = 1);
+	bool InitializeIamai(UGGUFModelAsset* model, int size = 8192, int tokens = 512, int batch = 512, int threads = 1);
 
 
 	/**
@@ -50,7 +52,7 @@ public:
 	 * @param ModelName - Name of the model directory to load
 	 * @return Whether initialization was successful
 	 */
-	bool InitializeWhisper(const FString& ModelName, int threads = 1);
+	bool InitializeWhisper(UBinModelAsset* model, int threads = 1);
 
 
 	/**

@@ -2,7 +2,7 @@
 
 #include "Async/Async.h"
 
-UInitializeAI* UInitializeAI::CreateInitializeAll(const FString& IamaiModel, const FString& WhisperModel) {
+UInitializeAI* UInitializeAI::CreateInitializeAll(UGGUFModelAsset* IamaiModel, UBinModelAsset* WhisperModel) {
 
 	UInitializeAI* Node = NewObject<UInitializeAI>();
 
@@ -13,7 +13,7 @@ UInitializeAI* UInitializeAI::CreateInitializeAll(const FString& IamaiModel, con
 
 }
 
-UInitializeAI* UInitializeAI::CreateInitializeIamai(const FString& IamaiModel) {
+UInitializeAI* UInitializeAI::CreateInitializeIamai(UGGUFModelAsset* IamaiModel) {
 
 	UInitializeAI* Node = NewObject<UInitializeAI>();
 
@@ -23,7 +23,7 @@ UInitializeAI* UInitializeAI::CreateInitializeIamai(const FString& IamaiModel) {
 
 }
 
-UInitializeAI* UInitializeAI::CreateInitializeIamaiParamaters(const FString& IamaiModel, int size, int tokens, int batch, int threads) {
+UInitializeAI* UInitializeAI::CreateInitializeIamaiParamaters(UGGUFModelAsset* IamaiModel, int size, int tokens, int batch, int threads) {
 	
 	UInitializeAI* Node = NewObject<UInitializeAI>();
 
@@ -37,7 +37,7 @@ UInitializeAI* UInitializeAI::CreateInitializeIamaiParamaters(const FString& Iam
 
 }
 
-UInitializeAI* UInitializeAI::InitializeIamai(UAIWrapper* Wrapper, const FString& IamaiModel, int tokens, int batch, int threads) {
+UInitializeAI* UInitializeAI::InitializeIamai(UAIWrapper* Wrapper, UGGUFModelAsset* IamaiModel, int tokens, int batch, int threads) {
 
 	if (!Wrapper) return nullptr;
 
@@ -53,24 +53,24 @@ UInitializeAI* UInitializeAI::InitializeIamai(UAIWrapper* Wrapper, const FString
 
 }
 
-UInitializeAI* UInitializeAI::CreateInitializeWhisper(const FString& WhisperModel, int threads) {
+UInitializeAI* UInitializeAI::CreateInitializeWhisper(UBinModelAsset* model, int threads) {
 
 	UInitializeAI* Node = NewObject<UInitializeAI>();
 
-	Node->m_whisperModel = WhisperModel;
+	Node->m_whisperModel = model;
 	Node->m_whisperThreads = threads;
 
 	return Node;
 
 }
 
-UInitializeAI* UInitializeAI::InitializeWhisper(UAIWrapper* Wrapper, const FString& WhisperModel, int threads) {
+UInitializeAI* UInitializeAI::InitializeWhisper(UAIWrapper* Wrapper, UBinModelAsset* model, int threads) {
 
 	if (!Wrapper) return nullptr;
 
 	UInitializeAI* Node = NewObject<UInitializeAI>();
 
-	Node->m_whisperModel = WhisperModel;
+	Node->m_whisperModel = model;
 	Node->m_aiWrapper = Wrapper;
 	Node->m_whisperThreads = threads;
 
@@ -91,21 +91,21 @@ void UInitializeAI::Activate() {
 		if (m_aiWrapper) {
 
 			bWrapper = true;
-			if (!m_iamaiModel.IsEmpty()) {
+			if (m_iamaiModel) {
 
 				if (m_size > 0) bIamaiModel = m_aiWrapper->InitializeIamai(m_iamaiModel, m_size, m_iamaiTokens, m_iamaiBatch, m_iamaiThreads);
 				else bIamaiModel = m_aiWrapper->DefaultInitializeIamai(m_iamaiModel);
 
 			}
-			if (!m_whisperModel.IsEmpty()) bWhisperModel = m_aiWrapper->InitializeWhisper(m_whisperModel, m_whisperThreads);
+			if (m_whisperModel) bWhisperModel = m_aiWrapper->InitializeWhisper(m_whisperModel, m_whisperThreads);
 
 		}
 
 		Async(EAsyncExecution::TaskGraphMainThread, [this, bWrapper, bIamaiModel, bWhisperModel]() {
 
 			if (!bWrapper) UE_LOG(LogTemp, Error, TEXT("Failed to create wrapper!"));
-			if (!bIamaiModel) UE_LOG(LogTemp, Error, TEXT("Failed to initialize Iamai AI with model: %s"), *m_iamaiModel);
-			if (!bWhisperModel) UE_LOG(LogTemp, Error, TEXT("Failed to initialize Whisper AI with model: %s"), *m_whisperModel);
+			if (!bIamaiModel) UE_LOG(LogTemp, Error, TEXT("Failed to initialize Iamai AI with model!"));
+			if (!bWhisperModel) UE_LOG(LogTemp, Error, TEXT("Failed to initialize Whisper AI with model!"));
 
 			OnCompleted.Broadcast(bWrapper && bIamaiModel && bWhisperModel, (bWrapper) ? m_aiWrapper : nullptr);
 

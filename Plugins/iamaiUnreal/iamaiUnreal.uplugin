@@ -11,16 +11,23 @@
 	"MarketplaceURL": "",
 	"SupportURL": "",
 	"EnabledByDefault": true,
-	"CanContainContent": false,
+	"CanContainContent": true,
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Installed": false,
 	"Modules": [
 		{
 			"Name": "iamaiUnreal",
-			"Type": "Runtime",
-			"LoadingPhase": "PostEngineInit"
+			"Type": "Runtime"
+		},
+		{
+			"Name": "iamaiUnrealEditor",
+			"Type": "Editor",
+			"AdditionalDependencies": [ "iamaiUnreal" ]
 		}
+	],
+	"AdditionalNonAssetDirectoriesToCopy": [
+		"Models"
 	],
 	"Plugins": [
 		{

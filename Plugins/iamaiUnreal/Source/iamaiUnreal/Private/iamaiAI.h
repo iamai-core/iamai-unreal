@@ -5,11 +5,14 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include "GGUFModelAsset.h"
 
 
 #if PLATFORM_WINDOWS
 
-#include <windows.h>
+#include "Windows/AllowWindowsPlatformTypes.h"
+#include "Windows.h"
+#include "Windows/HideWindowsPlatformTypes.h"
 using LibHandle = HMODULE;
 
 #else
@@ -23,11 +26,9 @@ class IAMAIUNREAL_API iamaiAI {
 
 public:
 
-	iamaiAI(const std::string& modelName);
-	iamaiAI(const std::string& modelName, int size, int tokens = 512, int batch = 512, int threads = 1);
+	iamaiAI(UGGUFModelAsset* model);
+	iamaiAI(UGGUFModelAsset* model, int size, int tokens = 512, int batch = 512, int threads = 1);
 	~iamaiAI();
-
-	void LoadDLL(const std::string& modelName);
 
 	iamaiAI(const iamaiAI&) = delete;
 	iamaiAI& operator=(const iamaiAI&) = delete;
@@ -40,7 +41,11 @@ public:
 
 private:
 
-	std::string modelPath;
+	void LoadDLL();
+
+	FString SaveTempModelFile(UGGUFModelAsset* model);
+	FString TempFilePath;
+
 	LibHandle DllHandle;
 	void* ctx = nullptr;
 
