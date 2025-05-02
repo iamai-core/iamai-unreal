@@ -14,12 +14,12 @@ class IAMAIUNREAL_API UiamaiVoiceInput : public USynthComponent {
 
 	GENERATED_BODY()
 
+public:
+
 	virtual bool Init(int32& SampleRate) override;
 
 	virtual int32 OnGenerateAudio(float* OutAudio, int32 NumSamples) override;
 	virtual void BeginDestroy() override;
-
-public:
 
 	UFUNCTION(BlueprintCallable, Category = "iamai core")
 	void StartCapturingAudio();

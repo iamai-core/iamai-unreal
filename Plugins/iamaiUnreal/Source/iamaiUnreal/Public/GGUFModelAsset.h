@@ -12,7 +12,9 @@ class IAMAIUNREAL_API UGGUFModelAsset : public UObject {
 
 public:
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Model")
-    TArray<uint8> FileData;
+	virtual void BeginDestroy() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GGUF Model")
+	FString FilePath;
 
 };

@@ -16,20 +16,32 @@ UBinModelFactory::UBinModelFactory() {
 UObject* UBinModelFactory::FactoryCreateFile(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, const FString& Filename, const TCHAR* Parms, FFeedbackContext* Warn, bool& bOutOperationCanceled) {
 
     UBinModelAsset* NewAsset = NewObject<UBinModelAsset>(InParent, InClass, InName, Flags);
+	if (!NewAsset) {
 
-    TArray<uint8> FileData;
-    if (FFileHelper::LoadFileToArray(FileData, *Filename)) {
+		bOutOperationCanceled = true;
+		return nullptr;
 
-        NewAsset->FileData = MoveTemp(FileData);
+	}
 
-    } else {
+	FString FileNameOnly = FPaths::GetCleanFilename(Filename);
+	FString TargetFolder = FPaths::ProjectPluginsDir() / TEXT("iamaiUnreal/Models");
+	FString TargetPath = TargetFolder / FileNameOnly;
 
-        UE_LOG(LogTemp, Warning, TEXT("Failed to load file: %s"), *Filename);
-        bOutOperationCanceled = true;
-        return nullptr;
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	if (!PlatformFile.DirectoryExists(*TargetFolder)) PlatformFile.CreateDirectory(*TargetFolder);
 
-    }
+	if (PlatformFile.CopyFile(*TargetPath, *Filename)) {
 
-    return NewAsset;
+		UE_LOG(LogTemp, Log, TEXT("Copied GGUF model to Content/Raw: %s"), *TargetPath);
+		NewAsset->FilePath = TEXT("Plugins/iamaiUnreal/Models/") / FileNameOnly;
+		return NewAsset;
+
+	} else {
+
+		UE_LOG(LogTemp, Warning, TEXT("Failed to copy GGUF model to Content/Raw"));
+		bOutOperationCanceled = true;
+		return nullptr;
+
+	}
 
 }

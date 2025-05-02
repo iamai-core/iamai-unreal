@@ -39,9 +39,6 @@ public:
 
 private:
 
-	FString SaveTempModelFile(UBinModelAsset* model);
-	FString TempFilePath;
-
 	std::mutex transcribeMutex;
 
 	LibHandle DllHandle = nullptr;

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "fstream"
 #include "AIWrapper.h"
+#include "fstream"
 
 UAIWrapper::UAIWrapper() :
 	iamaiInstance(nullptr),
@@ -125,7 +125,7 @@ std::vector<float> clean_pcm(const std::vector<float>& input, float threshold) {
 
 FString UAIWrapper::Transcribe(float* AudioData, int SampleCount, float threshold) {
 
-	if (!iamaiInstance) return "";
+	if (!whisperInstance) return "";
 
 	std::vector<float> cleaned = clean_pcm(std::vector<float>(AudioData, AudioData + SampleCount), threshold);
 	if (cleaned.empty()) return "";

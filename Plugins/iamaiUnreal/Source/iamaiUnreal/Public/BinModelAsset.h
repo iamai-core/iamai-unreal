@@ -12,7 +12,10 @@ class IAMAIUNREAL_API UBinModelAsset : public UObject {
 
 public:
 
+    virtual void BeginDestroy() override;
+    virtual void PostRename(UObject* OldOuter, const FName OldName) override;
+    
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Model")
-    TArray<uint8> FileData;
+    FString FilePath;
 
 };

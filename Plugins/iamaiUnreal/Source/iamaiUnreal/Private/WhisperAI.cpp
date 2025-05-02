@@ -6,8 +6,6 @@ WhisperAI::WhisperAI(UBinModelAsset* model, int threads) {
 
 	if (threads <= 0) throw std::invalid_argument("Threads must be greater than 0");
 
-    TempFilePath = SaveTempModelFile(model);
-
     FString ProjectDir = FPaths::ProjectDir();
     FString PluginDir = FPaths::Combine(ProjectDir, TEXT("Plugins"), TEXT("iamaiUnreal"));
     FString LibDir = FPaths::Combine(PluginDir, TEXT("ThirdParty"));
@@ -57,7 +55,8 @@ WhisperAI::WhisperAI(UBinModelAsset* model, int threads) {
     _setTranslate = GetFunction<SetTranslateFunction>("setTranslate");
     _transcribe = GetFunction<TranscribeFunction>("Transcrible");
 
-    ctx = _init(TCHAR_TO_UTF8(*TempFilePath), threads);
+    FString path = FPaths::ProjectDir() / model->FilePath;
+    ctx = _init(TCHAR_TO_UTF8(*path), threads);
     if (!ctx) throw std::runtime_error("Failed to initialize whisper model");
 
 }
@@ -88,18 +87,6 @@ std::string WhisperAI::Transcribe(float* data, int samples) {
 
     const char* result = _transcribe(ctx, data, samples);
     return result ? std::string(result) : "";
-
-}
-
-FString WhisperAI::SaveTempModelFile(UBinModelAsset* model) {
-    
-    if (!model || model->FileData.Num() == 0) throw std::invalid_argument("Model data is invalid or empty");
-
-    FString TempDir = FPaths::ProjectSavedDir();
-    FString UniqueFilename = FPaths::CreateTempFilename(*TempDir, TEXT("whisper_model_"), TEXT(".gguf"));
-    if (!FFileHelper::SaveArrayToFile(model->FileData, *UniqueFilename)) throw std::runtime_error("Failed to save temp model file");
-
-    return UniqueFilename;
 
 }
 
