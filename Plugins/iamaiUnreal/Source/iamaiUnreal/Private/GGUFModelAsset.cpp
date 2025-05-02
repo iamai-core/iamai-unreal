@@ -6,6 +6,7 @@ void UGGUFModelAsset::BeginDestroy() {
 
 	Super::BeginDestroy();
 
+	/*
 	if (FilePath.IsEmpty()) return;
 	FString FullPath = FPaths::ProjectDir() / FilePath;
 
@@ -15,6 +16,7 @@ void UGGUFModelAsset::BeginDestroy() {
 		PlatformFile.DeleteFile(*FullPath);
 
 	}
+	*/
 
 }
 

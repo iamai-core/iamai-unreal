@@ -33,13 +33,13 @@ UObject* UGGUFModelFactory::FactoryCreateFile(UClass* InClass, UObject* InParent
 
 	if (PlatformFile.CopyFile(*TargetPath, *Filename)) {
 
-		UE_LOG(LogTemp, Log, TEXT("Copied GGUF model to Content/Raw: %s"), *TargetPath);
+		UE_LOG(LogTemp, Log, TEXT("Copied GGUF model to iamaiUnreal/Models: %s"), *TargetPath);
 		NewAsset->FilePath = TEXT("Plugins/iamaiUnreal/Models/") / FileNameOnly;
 		return NewAsset;
 
 	} else {
 
-		UE_LOG(LogTemp, Warning, TEXT("Failed to copy GGUF model to Content/Raw"));
+		UE_LOG(LogTemp, Warning, TEXT("Failed to copy GGUF model to iamaiUnreal/Models"));
 		bOutOperationCanceled = true;
 		return nullptr;
 
