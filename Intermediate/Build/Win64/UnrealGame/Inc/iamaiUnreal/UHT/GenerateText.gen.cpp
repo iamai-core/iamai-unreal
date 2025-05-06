@@ -86,7 +86,7 @@ struct Z_Construct_UFunction_UGenerateText_Generate_Statics
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
 		{ "BlueprintInternalUseOnly", "true" },
-		{ "Category", "Iamai Core" },
+		{ "Category", "iamai" },
 		{ "CPP_Default_MaxLength", "4096" },
 		{ "DisplayName", "Generate Text" },
 		{ "ModuleRelativePath", "Public/GenerateText.h" },
@@ -154,10 +154,14 @@ struct Z_Construct_UClass_UGenerateText_Statics
 {
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
+#if !UE_BUILD_SHIPPING
 		{ "Comment", "/**\n * Generate text based on a prompt\n * @param Prompt - The input prompt\n * @param MaxLength - Maximum length of the generated output\n * @return The generated text\n */" },
+#endif
 		{ "IncludePath", "GenerateText.h" },
 		{ "ModuleRelativePath", "Public/GenerateText.h" },
+#if !UE_BUILD_SHIPPING
 		{ "ToolTip", "Generate text based on a prompt\n@param Prompt - The input prompt\n@param MaxLength - Maximum length of the generated output\n@return The generated text" },
+#endif
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_OnCompleted_MetaData[] = {
 		{ "ModuleRelativePath", "Public/GenerateText.h" },
@@ -167,7 +171,7 @@ struct Z_Construct_UClass_UGenerateText_Statics
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
-		{ &Z_Construct_UFunction_UGenerateText_Generate, "Generate" }, // 745148139
+		{ &Z_Construct_UFunction_UGenerateText_Generate, "Generate" }, // 2029036702
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -218,14 +222,14 @@ UGenerateText::~UGenerateText() {}
 // End Class UGenerateText
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_plugin_iamaiUnreal_HostProject_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_GenerateText_h_Statics
+struct Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_GenerateText_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UGenerateText, UGenerateText::StaticClass, TEXT("UGenerateText"), &Z_Registration_Info_UClass_UGenerateText, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UGenerateText), 1451320151U) },
+		{ Z_Construct_UClass_UGenerateText, UGenerateText::StaticClass, TEXT("UGenerateText"), &Z_Registration_Info_UClass_UGenerateText, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UGenerateText), 694474900U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_plugin_iamaiUnreal_HostProject_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_GenerateText_h_114070163(TEXT("/Script/iamaiUnreal"),
-	Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_plugin_iamaiUnreal_HostProject_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_GenerateText_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_plugin_iamaiUnreal_HostProject_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_GenerateText_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_GenerateText_h_4110359405(TEXT("/Script/iamaiUnreal"),
+	Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_GenerateText_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_GenerateText_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

@@ -7,13 +7,15 @@
 
 #include <memory>
 
-#include "iamai_AI.h"
+#include "iamaiAI.h"
+#include "WhisperAI.h"
+#include "GGUFModelAsset.h"
+#include "BinModelAsset.h"
 
 #include "AIWrapper.generated.h"
 
-/**
- * Blueprint-friendly wrapper for the AI class
- */
+struct FiamaiConfig;
+
 UCLASS(BlueprintType, Blueprintable)
 class IAMAIUNREAL_API UAIWrapper : public UObject {
 
@@ -21,7 +23,8 @@ class IAMAIUNREAL_API UAIWrapper : public UObject {
 
 private:
 
-	std::unique_ptr<iamai_AI> AIInstance;
+	std::unique_ptr<iamaiAI> iamaiInstance;
+	std::unique_ptr<WhisperAI> whisperInstance;
 
 public:
 
@@ -29,11 +32,37 @@ public:
 	virtual ~UAIWrapper();
 
 	/**
-	 * Initialize the AI with a specific model
+	 * Initialize the Iamai AI with a specific model
+	 * @param model - Name of the model directory to load
+	 * @return Whether initialization was successful
+	 */
+	bool DefaultInitializeIamai(UGGUFModelAsset* model);
+
+	/**
+	 * Initialize the Iamai AI with a specific model
+	 * @param model - Name of the model directory to load
+	 * @return Whether initialization was successful
+	 */
+	bool InitializeIamai(UGGUFModelAsset* model);
+
+	/**
+	 * Initialize the Iamai AI with a specific model and parameters
+	 * @param model - Name of the model directory to load
+	 * @param config - Name of the model directory to load
+	 * @return Whether initialization was successful
+	 */
+	bool InitializeIamai(UGGUFModelAsset* model, FiamaiConfig config);
+
+
+	/**
+	 * Initialize the Whisper AI with a specific model
 	 * @param ModelName - Name of the model directory to load
 	 * @return Whether initialization was successful
 	 */
-	bool Initialize(const FString& ModelName);
+	bool InitializeWhisper(UBinModelAsset* model, int threads = 1);
+
+
+	// iamai
 
 
 	/**
@@ -48,21 +77,24 @@ public:
 	 * Set the maximum number of tokens to generate
 	 * @param MaxTokens - Maximum number of tokens
 	 */
-	UFUNCTION(BlueprintCallable, Category = "iamai AI")
+	UFUNCTION(BlueprintCallable, Category = "iamai")
 	void SetMaxTokens(int32 MaxTokens);
 
-	/**
-	 * Set the number of threads to use
-	 * @param NumThreads - Number of threads
-	 */
-	UFUNCTION(BlueprintCallable, Category = "iamai AI")
-	void SetThreads(int32 NumThreads);
+	UFUNCTION(BlueprintCallable, Category = "iamai")
+	void SetPromptFormat(const FString& Format);
+
+	UFUNCTION(BlueprintCallable, Category = "iamai")
+	void ClearPromptFormat();
+
+
+
+	// Whisper
 
 	/**
-	 * Set the batch size for generation
-	 * @param BatchSize - Batch size
-	 */
-	UFUNCTION(BlueprintCallable, Category = "iamai AI")
-	void SetBatchSize(int32 BatchSize);
+	* Transcribe audio to text from float array
+	* @param AudioData - Pointer to the audio data
+	* @param SampleCount - Number of samples in the audio data
+	*/
+	FString Transcribe(float* AudioData, int SampleCount, float threshold);
 
 };

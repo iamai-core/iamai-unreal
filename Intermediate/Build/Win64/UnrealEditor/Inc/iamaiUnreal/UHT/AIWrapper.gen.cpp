@@ -16,50 +16,35 @@ IAMAIUNREAL_API UClass* Z_Construct_UClass_UAIWrapper_NoRegister();
 UPackage* Z_Construct_UPackage__Script_iamaiUnreal();
 // End Cross Module References
 
-// Begin Class UAIWrapper Function SetBatchSize
-struct Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics
+// Begin Class UAIWrapper Function ClearPromptFormat
+struct Z_Construct_UFunction_UAIWrapper_ClearPromptFormat_Statics
 {
-	struct AIWrapper_eventSetBatchSize_Parms
-	{
-		int32 BatchSize;
-	};
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
-		{ "Category", "iamai AI" },
-		{ "Comment", "/**\n\x09 * Set the batch size for generation\n\x09 * @param BatchSize - Batch size\n\x09 */" },
+		{ "Category", "iamai" },
 		{ "ModuleRelativePath", "Public/AIWrapper.h" },
-		{ "ToolTip", "Set the batch size for generation\n@param BatchSize - Batch size" },
 	};
 #endif // WITH_METADATA
-	static const UECodeGen_Private::FIntPropertyParams NewProp_BatchSize;
-	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static const UECodeGen_Private::FFunctionParams FuncParams;
 };
-const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::NewProp_BatchSize = { "BatchSize", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AIWrapper_eventSetBatchSize_Parms, BatchSize), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::NewProp_BatchSize,
-};
-static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::PropPointers) < 2048);
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UAIWrapper, nullptr, "SetBatchSize", nullptr, nullptr, Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::PropPointers), sizeof(Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::AIWrapper_eventSetBatchSize_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::Function_MetaDataParams), Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::Function_MetaDataParams) };
-static_assert(sizeof(Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::AIWrapper_eventSetBatchSize_Parms) < MAX_uint16);
-UFunction* Z_Construct_UFunction_UAIWrapper_SetBatchSize()
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UAIWrapper_ClearPromptFormat_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UAIWrapper, nullptr, "ClearPromptFormat", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_ClearPromptFormat_Statics::Function_MetaDataParams), Z_Construct_UFunction_UAIWrapper_ClearPromptFormat_Statics::Function_MetaDataParams) };
+UFunction* Z_Construct_UFunction_UAIWrapper_ClearPromptFormat()
 {
 	static UFunction* ReturnFunction = nullptr;
 	if (!ReturnFunction)
 	{
-		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UAIWrapper_SetBatchSize_Statics::FuncParams);
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UAIWrapper_ClearPromptFormat_Statics::FuncParams);
 	}
 	return ReturnFunction;
 }
-DEFINE_FUNCTION(UAIWrapper::execSetBatchSize)
+DEFINE_FUNCTION(UAIWrapper::execClearPromptFormat)
 {
-	P_GET_PROPERTY(FIntProperty,Z_Param_BatchSize);
 	P_FINISH;
 	P_NATIVE_BEGIN;
-	P_THIS->SetBatchSize(Z_Param_BatchSize);
+	P_THIS->ClearPromptFormat();
 	P_NATIVE_END;
 }
-// End Class UAIWrapper Function SetBatchSize
+// End Class UAIWrapper Function ClearPromptFormat
 
 // Begin Class UAIWrapper Function SetMaxTokens
 struct Z_Construct_UFunction_UAIWrapper_SetMaxTokens_Statics
@@ -70,10 +55,14 @@ struct Z_Construct_UFunction_UAIWrapper_SetMaxTokens_Statics
 	};
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
-		{ "Category", "iamai AI" },
+		{ "Category", "iamai" },
+#if !UE_BUILD_SHIPPING
 		{ "Comment", "/**\n\x09 * Set the maximum number of tokens to generate\n\x09 * @param MaxTokens - Maximum number of tokens\n\x09 */" },
+#endif
 		{ "ModuleRelativePath", "Public/AIWrapper.h" },
+#if !UE_BUILD_SHIPPING
 		{ "ToolTip", "Set the maximum number of tokens to generate\n@param MaxTokens - Maximum number of tokens" },
+#endif
 	};
 #endif // WITH_METADATA
 	static const UECodeGen_Private::FIntPropertyParams NewProp_MaxTokens;
@@ -106,59 +95,60 @@ DEFINE_FUNCTION(UAIWrapper::execSetMaxTokens)
 }
 // End Class UAIWrapper Function SetMaxTokens
 
-// Begin Class UAIWrapper Function SetThreads
-struct Z_Construct_UFunction_UAIWrapper_SetThreads_Statics
+// Begin Class UAIWrapper Function SetPromptFormat
+struct Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics
 {
-	struct AIWrapper_eventSetThreads_Parms
+	struct AIWrapper_eventSetPromptFormat_Parms
 	{
-		int32 NumThreads;
+		FString Format;
 	};
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
-		{ "Category", "iamai AI" },
-		{ "Comment", "/**\n\x09 * Set the number of threads to use\n\x09 * @param NumThreads - Number of threads\n\x09 */" },
+		{ "Category", "iamai" },
 		{ "ModuleRelativePath", "Public/AIWrapper.h" },
-		{ "ToolTip", "Set the number of threads to use\n@param NumThreads - Number of threads" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Format_MetaData[] = {
+		{ "NativeConst", "" },
 	};
 #endif // WITH_METADATA
-	static const UECodeGen_Private::FIntPropertyParams NewProp_NumThreads;
+	static const UECodeGen_Private::FStrPropertyParams NewProp_Format;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static const UECodeGen_Private::FFunctionParams FuncParams;
 };
-const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::NewProp_NumThreads = { "NumThreads", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AIWrapper_eventSetThreads_Parms, NumThreads), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::NewProp_NumThreads,
+const UECodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::NewProp_Format = { "Format", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AIWrapper_eventSetPromptFormat_Parms, Format), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Format_MetaData), NewProp_Format_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::NewProp_Format,
 };
-static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::PropPointers) < 2048);
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UAIWrapper, nullptr, "SetThreads", nullptr, nullptr, Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::PropPointers), sizeof(Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::AIWrapper_eventSetThreads_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::Function_MetaDataParams), Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::Function_MetaDataParams) };
-static_assert(sizeof(Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::AIWrapper_eventSetThreads_Parms) < MAX_uint16);
-UFunction* Z_Construct_UFunction_UAIWrapper_SetThreads()
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UAIWrapper, nullptr, "SetPromptFormat", nullptr, nullptr, Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::PropPointers), sizeof(Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::AIWrapper_eventSetPromptFormat_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::Function_MetaDataParams), Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::Function_MetaDataParams) };
+static_assert(sizeof(Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::AIWrapper_eventSetPromptFormat_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UAIWrapper_SetPromptFormat()
 {
 	static UFunction* ReturnFunction = nullptr;
 	if (!ReturnFunction)
 	{
-		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UAIWrapper_SetThreads_Statics::FuncParams);
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UAIWrapper_SetPromptFormat_Statics::FuncParams);
 	}
 	return ReturnFunction;
 }
-DEFINE_FUNCTION(UAIWrapper::execSetThreads)
+DEFINE_FUNCTION(UAIWrapper::execSetPromptFormat)
 {
-	P_GET_PROPERTY(FIntProperty,Z_Param_NumThreads);
+	P_GET_PROPERTY(FStrProperty,Z_Param_Format);
 	P_FINISH;
 	P_NATIVE_BEGIN;
-	P_THIS->SetThreads(Z_Param_NumThreads);
+	P_THIS->SetPromptFormat(Z_Param_Format);
 	P_NATIVE_END;
 }
-// End Class UAIWrapper Function SetThreads
+// End Class UAIWrapper Function SetPromptFormat
 
 // Begin Class UAIWrapper
 void UAIWrapper::StaticRegisterNativesUAIWrapper()
 {
 	UClass* Class = UAIWrapper::StaticClass();
 	static const FNameNativePtrPair Funcs[] = {
-		{ "SetBatchSize", &UAIWrapper::execSetBatchSize },
+		{ "ClearPromptFormat", &UAIWrapper::execClearPromptFormat },
 		{ "SetMaxTokens", &UAIWrapper::execSetMaxTokens },
-		{ "SetThreads", &UAIWrapper::execSetThreads },
+		{ "SetPromptFormat", &UAIWrapper::execSetPromptFormat },
 	};
 	FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 }
@@ -172,18 +162,16 @@ struct Z_Construct_UClass_UAIWrapper_Statics
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
-		{ "Comment", "/**\n * Blueprint-friendly wrapper for the AI class\n */" },
 		{ "IncludePath", "AIWrapper.h" },
 		{ "IsBlueprintBase", "true" },
 		{ "ModuleRelativePath", "Public/AIWrapper.h" },
-		{ "ToolTip", "Blueprint-friendly wrapper for the AI class" },
 	};
 #endif // WITH_METADATA
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
-		{ &Z_Construct_UFunction_UAIWrapper_SetBatchSize, "SetBatchSize" }, // 2007031066
-		{ &Z_Construct_UFunction_UAIWrapper_SetMaxTokens, "SetMaxTokens" }, // 2015143022
-		{ &Z_Construct_UFunction_UAIWrapper_SetThreads, "SetThreads" }, // 4289937744
+		{ &Z_Construct_UFunction_UAIWrapper_ClearPromptFormat, "ClearPromptFormat" }, // 1481439364
+		{ &Z_Construct_UFunction_UAIWrapper_SetMaxTokens, "SetMaxTokens" }, // 2172260624
+		{ &Z_Construct_UFunction_UAIWrapper_SetPromptFormat, "SetPromptFormat" }, // 2894477048
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -227,14 +215,14 @@ DEFINE_VTABLE_PTR_HELPER_CTOR(UAIWrapper);
 // End Class UAIWrapper
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_plugin_iamaiUnreal_HostProject_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_AIWrapper_h_Statics
+struct Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_AIWrapper_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UAIWrapper, UAIWrapper::StaticClass, TEXT("UAIWrapper"), &Z_Registration_Info_UClass_UAIWrapper, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UAIWrapper), 3210240442U) },
+		{ Z_Construct_UClass_UAIWrapper, UAIWrapper::StaticClass, TEXT("UAIWrapper"), &Z_Registration_Info_UClass_UAIWrapper, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UAIWrapper), 465764222U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_plugin_iamaiUnreal_HostProject_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_AIWrapper_h_3583414767(TEXT("/Script/iamaiUnreal"),
-	Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_plugin_iamaiUnreal_HostProject_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_AIWrapper_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_plugin_iamaiUnreal_HostProject_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_AIWrapper_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_AIWrapper_h_4088664434(TEXT("/Script/iamaiUnreal"),
+	Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_AIWrapper_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_Collin_Documents_Repos_iamai_unreal_Plugins_iamaiUnreal_Source_iamaiUnreal_Public_AIWrapper_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration
